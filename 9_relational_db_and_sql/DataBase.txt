@@ -1,0 +1,710 @@
+CREATE SCHEMA `new_schema` DEFAULT CHARACTER SET utf8 ;
+
+CREATE TABLE IF NOT EXISTS `billing_simple`.`billing` (
+  `payer_email` VARCHAR(255) NULL,
+  `recipient_email` VARCHAR(255) NULL,
+  `sum` DECIMAL(18,2) NULL,
+  `currency` VARCHAR(3) NULL,
+  `billing_date` DATE NULL,
+  `comment` TEXT NULL)
+ENGINE = InnoDB;
+
+SELECT * FROM billing WHERE payer_email='vasya@mail.com';
+
+INSERT INTO billing VALUES (
+    'pasha@mail.com',
+    'katya@mail.com',
+    300.00,
+    'EUR',
+    '2016.02.14',
+    'Valentines day present)'
+);
+
+UPDATE billing SET payer_email='igor@mail.com' WHERE payer_email='alex@mail.com';
+
+DELETE FROM billing WHERE payer_email IS NULL OR payer_email='' OR recipient_email IS NULL OR recipient_email='';
+
+SELECT COUNT(1) FROM project;
+
+SELECT AVG(Population) FROM country;
+
+SELECT
+	project_finish,
+	project_start,
+	DATEDIFF(project_finish, project_start)
+FROM project
+WHERE project_finish IS NOT NULL;
+
+SELECT
+	AVG(DATEDIFF(project_finish, project_start)) as avg_days,
+	MAX(DATEDIFF(project_finish, project_start)) as max_days,
+	MIN(DATEDIFF(project_finish, project_start)) as min_days,
+	client_name
+FROM project
+WHERE project_finish IS NOT NULL
+GROUP BY client_name
+ORDER BY max_days
+LIMIT 10;
+
+SELECT
+	COUNT(1)
+	AVG(budget)
+	client_name
+FROM project
+GROUP BY client_name;
+
+SELECT category, count(1)
+FROM store
+GROUP BY category
+ORDER BY category;
+
+SELECT
+	category,
+	SUM(price * sold_num) as viruchka
+
+FROM store
+
+GROUP BY category
+
+ORDER BY viruchka DESC
+
+LIMIT 5;
+
+SELECT
+    COUNT(1),
+    SUM(budget),
+    AVG(DATEDIFF(project_finish, project_start))
+FROM project;
+
+SELECT * FROM product
+CROSS JOIN category;
+
+SELECT * FROM product
+INNER JOIN category ON product.category_id = category.category_id;
+
+SELECT * FROM category as c
+LEFT OUTER JOIN product as p on p.category_id = c.category_id;
+
+SELECT c.name, a.name FROM category_has_good as b
+    INNER JOIN category as a ON b.category_id = a.id
+    INNER JOIN good as c ON b.good_id = c.id
+    ORDER BY c.name, a.name;
+
+SELECT c.first_name, c.last_name, count(1) FROM sale as s
+    INNER JOIN client as c ON s.client_id = c.id
+    INNER JOIN status as st ON s.status_id = st.id
+    WHERE st.name='new'
+    GROUP BY c.first_name, c.last_name;
+
+SELECT * FROM category as c
+	LEFT OUTER JOIN product as p
+	ON p.category = c.category_id;
+
+SELECT * FROM product as p
+	RIGHT OUTER JOIN category as c
+	ON p.category_id = c.category_id;
+
+SELECT * FROM product WHERE price > 900
+UNION
+SELECT * FROM product WHERE price < 100;
+
+FULL OUTER JOIN...(left + right) NATURAL JOIN...
+
+SELECT c.name, a.name FROM category_has_good as b
+    LEFT OUTER JOIN category as a ON b.category_id = a.id
+    RIGHT OUTER JOIN good as c ON b.good_id = c.id;
+
+SELECT c.name, a.name FROM category_has_good as b
+    LEFT OUTER JOIN category as a ON b.category_id = a.id
+    RIGHT OUTER JOIN good as c ON b.good_id = c.id
+UNION
+SELECT c.name, a.name FROM category_has_good as b
+    RIGHT OUTER JOIN category as a ON b.category_id = a.id
+    LEFT OUTER JOIN good as c ON b.good_id = c.id;
+
+SELECT so.name, SUM(sa.sale_sum) FROM client as c
+    RIGHT OUTER JOIN source as so ON c.source_id = so.id
+    LEFT OUTER JOIN sale as sa ON c.id = sa.client_id
+GROUP BY so.name;
+
+
+
+
+SELECT good.name FROM good
+	INNER JOIN sale_has_good ON good.id = sale_has_good.good_id
+	INNER JOIN sale ON sale_has_good.sale_id = sale.id
+	INNER JOIN status ON status.id = sale.status_id
+	WHERE status.name='delivering'
+UNION
+SELECT good.name FROM good
+	INNER JOIN category_has_good ON category_has_good.good_id = good.id
+	INNER JOIN category ON category.id = category_has_good.category_id
+	WHERE category.name='Cakes'
+
+
+
+
+SELECT category.name, COUNT(status.id) FROM category
+	LEFT OUTER JOIN category_has_good ON category.id = category_has_good.category_id
+	LEFT OUTER JOIN good ON category_has_good.good_id = good.id
+	LEFT OUTER JOIN sale_has_good ON good.id = sale_has_good.good_id
+	LEFT OUTER JOIN sale ON sale_has_good.sale_id = sale.id
+	LEFT OUTER JOIN status ON status.id = sale.status_id
+GROUP BY category.name
+
+
+
+
+SELECT source.name FROM source
+WHERE NOT EXISTS (
+	SELECT * FROM client
+	WHERE client.source_id = source.id
+)
+UNION
+SELECT source.name FROM source
+INNER JOIN client ON client.source_id = source.id
+WHERE NOT EXISTS (
+	SELECT * FROM sale
+	WHERE sale.client_id = client.id
+)
+UNION
+SELECT source.name FROM source
+INNER JOIN client ON client.source_id = source.id
+INNER JOIN sale ON sale.client_id = client.id
+INNER JOIN status ON status.id = sale.status_id
+WHERE status.name = 'rejected'
+
+
+
+
+CREATE TABLE IF NOT EXISTS `schema`.`best_offer_sale` (
+    `id` INT NOT NULL,
+    `name` VARCHAR(255) NULL,
+    `dt_start` DATETIME NOT NULL,
+    `dt_finish` DATETIME NOT NULL,
+    PRIMARY KEY (`id`)
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
+
+
+
+
+ALTER TABLE `store`.`sale`
+	DROP COLUMN dt_created,
+	DROP COLUMN dt_modified,
+	DROP FOREIGN KEY fk_order_status1,
+	DROP COLUMN status_id,
+	ADD COLUMN ts_modified TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	ADD COLUMN sale_status VARCHAR(45) NOT NULL DEFAULT 'new'
+		CHECK (VALUE IN ('new', 'process', 'assemly', 'ready', 'delivering', 'issued', 'rejected'));
+
+INSERT INTO `store`.`sale` (id, client_id, number, sale_sum, sale_status)
+	VALUES (51, 1, '51', NULL, 'process');
+
+UPDATE `store`.`sale` SET sale_status = 'ready' WHERE id = 51;
+
+INSERT INTO `store`.`sale` (id, client_id, number, sale_sum, sale_status)
+	VALUES(52, 1, '52', NULL, 'process');
+
+
+
+
+
+DROP TABLE `source`;
+
+
+
+
+ALTER TABLE `sale_has_good`
+    ADD COLUMN num INT NOT NULL,
+    ADD COLUMN price DECIMAL(18,2) NOT NULL;
+
+
+
+
+ALTER TABLE `client`
+    ADD source_id INT NULL,
+    ADD CONSTRAINT fk_source_id FOREIGN KEY (source_id) REFERENCES source(id);
+
+
+
+
+CONSTRAINT some_name FOREIGN KEY (name_of_the_columns, name_of_the_columns2) REFERENCES other_table(id1, id2)
+CONsTRAINT some_name PRIMARY KEY (c1, c2, c3)
+CONSTRAINT some_name UNIQUE (c1, c2, c3)
+
+
+
+
+"SELECT conference FROM Paper GROUP BY conferency HAVING COUNT(DISTINCT location) > 1"
+
+
+
+
+SELECT 
+    C.name,
+    CE.year,
+    COUNT(P.id)::NUMERIC AS total_papers,
+    ((SUM(P.accepted::INT))/((COUNT(P.id))::NUMERIC))::NUMERIC(3,2) as acceptance_ratio
+FROM Conference AS C
+JOIN ConferenceEvent AS CE ON C.id = CE.conference_id
+JOIN Paper AS P ON CE.id = P.event_id
+GROUP BY C.name, CE.year
+HAVING
+    (COUNT(P.id))::NUMERIC > 5
+    AND ((SUM(P.accepted::INT))/((COUNT(P.id))::NUMERIC))::NUMERIC(3,2) > 0.75;
+
+
+
+
+WITH RECURSIVE Bfs AS (
+	SELECT  V.id AS vertex_id,
+		V.parent AS parent_id,
+		V.value,
+		0 AS level
+	FROM Vertex AS V
+	WHERE id = 42
+
+	UNION ALL
+
+	SELECT V.id AS vertex_id, V.parent_id AS parent_id,
+		V.value, Bfs.level + 1 AS level
+	FROM Vertex V JOIN Bfs ON V.parent_id = Bfs.vertex_id
+)
+SELECT * FROM Bfs;
+
+
+
+
+WITH RECURSIVE Fibonacci AS (
+	SELECT 1 AS ord,
+	1 AS value,
+	1 AS next_value
+
+	UNION ALL
+
+	SELECT ord + 1 AS value,
+	next_value,
+	value + next_value
+	FROM Fibonacci
+	WHERE ord < 10
+)
+SELECT * FROM Fibonacci;
+
+
+
+
+
+
+
+//MY DATABASE RESTAURANTS
+
+DROP TABLE `restaurants`.`rest`;
+
+CREATE TABLE IF NOT EXISTS `restaurants`.`rest` (
+    
+`id` INT NOT NULL auto_increment,
+    
+`rest_name` VARCHAR(255) NOT NULL,
+   
+ PRIMARY KEY (`id`),
+  
+CONSTRAINT uniq UNIQUE (rest_name)
+
+)
+
+ENGINE = InnoDB
+DEFAULT 
+CHARACTER SET = utf8
+
+COLLATE = utf8_general_ci;
+
+
+INSERT INTO `restaurants`.`rest` (`rest_name`) VALUES ('rest1');
+INSERT INTO `restaurants`.`rest` (`rest_name`) VALUES ('rest2');
+
+
+
+
+DROP TABLE `restaurants`.`user`;
+
+CREATE TABLE IF NOT EXISTS `restaurants`.`user` (
+    
+`id` INT NOT NULL auto_increment,
+    
+`user_name` VARCHAR(255) NOT NULL,
+    
+`password` VARCHAR(255) NOT NULL,
+    
+PRIMARY KEY (`id`),
+  
+CONSTRAINT uniq UNIQUE (user_name)
+
+)
+
+ENGINE = InnoDB
+
+DEFAULT CHARACTER SET = utf8
+
+COLLATE = utf8_general_ci;
+
+INSERT INTO `restaurants`.`user`(
+	user_name, 
+	password
+) VALUES (
+	
+	'user1',
+    
+	'user1'
+
+);
+
+INSERT INTO `restaurants`.`user` (`user_name`, `password`) VALUES ('user2', 'user2');
+INSERT INTO `restaurants`.`user` (`user_name`, `password`) VALUES ('user3', 'user3');
+
+
+DROP TABLE IF EXISTS `restaurants`.`user_restaurant`;
+
+CREATE TABLE IF NOT EXISTS `restaurants`.`user_restaurant` (
+    
+`id` INT NOT NULL auto_increment,
+    
+`user_name` VARCHAR(255) NOT NULL,
+    
+`rest_name` VARCHAR(255) NULL,
+    
+PRIMARY KEY (`id`),
+  
+CONSTRAINT uniq UNIQUE (user_name),
+  
+CONSTRAINT fk FOREIGN KEY (user_name) REFERENCES user(user_name),
+  
+CONSTRAINT fk2 FOREIGN KEY (rest_name) REFERENCES rest(rest_name)
+
+)
+
+ENGINE = InnoDB
+
+DEFAULT CHARACTER SET = utf8
+
+COLLATE = utf8_general_ci;
+
+
+INSERT INTO `restaurants`.`user_restaurant` (`user_name`, `rest_name`) VALUES ('user1', 'rest1');
+INSERT INTO `restaurants`.`user_restaurant` (`user_name`, `rest_name`) VALUES ('user2', 'rest2');
+
+INSERT INTO `restaurants`.`user_restaurant` (`user_name`, `rest_name`) VALUES ('user3', 'rest1');
+
+
+
+
+
+
+
+
+
+
+
+
+DROP TABLE IF EXISTS `restaurants`.`user_restaurant`;
+DROP TABLE IF EXISTS `restaurants`.`rest`;
+DROP TABLE IF EXISTS `restaurants`.`user`;
+
+CREATE TABLE IF NOT EXISTS `restaurants`.`rest` (
+    
+`id` INT NOT NULL auto_increment,
+    
+`rest_name` VARCHAR(255) NOT NULL,
+   
+ PRIMARY KEY (`id`),
+  
+CONSTRAINT uniq UNIQUE (rest_name)
+
+)
+
+ENGINE = InnoDB
+DEFAULT 
+CHARACTER SET = utf8
+
+COLLATE = utf8_general_ci;
+
+INSERT INTO `restaurants`.`rest`(
+	rest_name
+) VALUES (
+	
+	'rest1'
+
+);
+
+
+
+CREATE TABLE IF NOT EXISTS `restaurants`.`user` (
+    
+`id` INT NOT NULL auto_increment,
+    
+`user_name` VARCHAR(255) NOT NULL,
+    
+`password` VARCHAR(255) NOT NULL,
+    
+PRIMARY KEY (`id`),
+  
+CONSTRAINT uniq UNIQUE (user_name)
+
+)
+
+ENGINE = InnoDB
+
+DEFAULT CHARACTER SET = utf8
+
+COLLATE = utf8_general_ci;
+
+INSERT INTO `restaurants`.`user`(
+	user_name, 
+	password
+) VALUES (
+	
+	'user1',
+    
+	'user1'
+
+);
+
+
+
+CREATE TABLE IF NOT EXISTS `restaurants`.`user_restaurant` (
+    
+`id` INT NOT NULL auto_increment,
+    
+`user_name` VARCHAR(255) NOT NULL,
+    
+`rest_name` VARCHAR(255) NULL,
+    
+PRIMARY KEY (`id`),
+  
+CONSTRAINT uniq UNIQUE (user_name),
+  
+CONSTRAINT fk FOREIGN KEY (user_name) REFERENCES user(user_name),
+  
+CONSTRAINT fk2 FOREIGN KEY (rest_name) REFERENCES rest(rest_name)
+
+)
+
+ENGINE = InnoDB
+
+DEFAULT CHARACTER SET = utf8
+
+COLLATE = utf8_general_ci;
+
+INSERT INTO `restaurants`.`user_restaurant`(
+	user_name, 
+	rest_name
+) VALUES (
+	
+	'user1',
+    
+	'rest1'
+
+);
+
+
+
+
+
+
+
+
+
+
+
+INSERT INTO `restaurants`.`rest`(`name`) VALUES ('rest');
+INSERT INTO `restaurants`.`rest`(`name`) VALUES ('rest2');
+INSERT INTO `restaurants`.`rest`(`name`) VALUES ('rest3');
+INSERT INTO `restaurants`.`rest`(`name`) VALUES ('rest4');
+INSERT INTO `restaurants`.`rest`(`name`) VALUES ('rest5');
+
+
+INSERT INTO `restaurants`.`user`(`username`, `password`) VALUES ('user', 'user');
+INSERT INTO `restaurants`.`user`(`username`, `password`) VALUES ('user2', 'user2');
+INSERT INTO `restaurants`.`user`(`username`, `password`) VALUES ('user3', 'user3');
+INSERT INTO `restaurants`.`user`(`username`, `password`) VALUES ('user4', 'user4');
+INSERT INTO `restaurants`.`user`(`username`, `password`) VALUES ('user5', 'user5');
+
+
+DROP TABLE IF EXISTS `restaurants`.`user`;
+
+DROP TABLE IF EXISTS `restaurants`.`rest`;
+
+CREATE TABLE IF NOT EXISTS `restaurants`.`rest` (
+    
+`id` INT NOT NULL auto_increment,
+    
+`name` VARCHAR(255) NOT NULL,
+    
+PRIMARY KEY (`id`),
+  
+CONSTRAINT uniq UNIQUE (name)
+
+)
+
+ENGINE = InnoDB
+
+DEFAULT CHARACTER SET = utf8
+
+COLLATE = utf8_general_ci;
+
+
+
+
+
+CREATE TABLE IF NOT EXISTS `restaurants`.`user` (
+    
+`id` INT NOT NULL auto_increment,
+    
+`username` VARCHAR(255) NOT NULL,
+    
+`password` VARCHAR(255) NOT NULL,
+
+`rest_name` VARCHAR(255) NULL,
+    
+PRIMARY KEY (`id`),
+  
+CONSTRAINT uniq2 UNIQUE (username),
+
+CONSTRAINT fk_rests FOREIGN KEY (rest_name) REFERENCES rest(name)
+
+)
+
+ENGINE = InnoDB
+
+DEFAULT CHARACTER SET = utf8
+
+COLLATE = utf8_general_ci;
+
+
+
+
+
+
+DROP TABLE IF EXISTS `restaurants`.`menu`;
+
+CREATE TABLE IF NOT EXISTS `restaurants`.`menu` (
+    
+
+`id` INT NOT NULL auto_increment,
+    
+`dish` VARCHAR(255) NOT NULL,
+
+`price` DOUBLE NOT NULL,
+    
+
+PRIMARY KEY (`id`),
+  
+
+CONSTRAINT uniqMenu UNIQUE (dish, price)
+
+)
+
+
+ENGINE = InnoDB
+
+
+DEFAULT CHARACTER SET = utf8
+
+
+COLLATE = utf8_general_ci;
+
+
+
+
+
+DROP TABLE IF EXISTS `restaurants`.`rest_menu`;
+
+CREATE TABLE IF NOT EXISTS `restaurants`.`rest_menu` (
+    
+`rest_id` INT NOT NULL,
+    
+`menu_id` INT NOT NULL,
+  
+PRIMARY KEY (rest_id, menu_id),
+  
+CONSTRAINT fk_rest_id FOREIGN KEY (rest_id) REFERENCES rest(id),
+  
+CONSTRAINT fk_menu_id FOREIGN KEY (menu_id) REFERENCES menu(id)
+
+)
+
+ENGINE = InnoDB
+
+DEFAULT CHARACTER SET = utf8
+
+COLLATE = utf8_general_ci;
+
+
+
+
+INSERT INTO `restaurants`.`rest`(`name`) VALUES ('rest');
+INSERT INTO `restaurants`.`rest`(`name`) VALUES ('rest2');
+INSERT INTO `restaurants`.`rest`(`name`) VALUES ('rest3');
+INSERT INTO `restaurants`.`rest`(`name`) VALUES ('rest4');
+INSERT INTO `restaurants`.`rest`(`name`) VALUES ('rest5');
+
+INSERT INTO `restaurants`.`user`(`username`, `password`) VALUES ('user', 'user');
+INSERT INTO `restaurants`.`user`(`username`, `password`) VALUES ('user2', 'user2');
+INSERT INTO `restaurants`.`user`(`username`, `password`) VALUES ('user3', 'user3');
+INSERT INTO `restaurants`.`user`(`username`, `password`) VALUES ('user4', 'user4');
+INSERT INTO `restaurants`.`user`(`username`, `password`) VALUES ('user5', 'user5');
+INSERT INTO `restaurants`.`user`(`username`, `password`) VALUES ('admin', 'admin');
+
+INSERT INTO `restaurants`.`menu`(`dish`, `price`) VALUES ('dish1', 1.1);
+INSERT INTO `restaurants`.`menu`(`dish`, `price`) VALUES ('dish2', 1.2);
+INSERT INTO `restaurants`.`menu`(`dish`, `price`) VALUES ('dish3', 1.3);
+INSERT INTO `restaurants`.`menu`(`dish`, `price`) VALUES ('dish4', 1.4);
+INSERT INTO `restaurants`.`menu`(`dish`, `price`) VALUES ('dish5', 1.5);
+
+INSERT INTO `restaurants`.`rest_menu` (`rest_id`, `menu_id`) VALUES (1, 1);
+INSERT INTO `restaurants`.`rest_menu` (`rest_id`, `menu_id`) VALUES (1, 2);
+INSERT INTO `restaurants`.`rest_menu` (`rest_id`, `menu_id`) VALUES (2, 1);
+
+
+
+
+
+PROCEDURES::::::
+
+USE company;
+DROP procedure IF EXISTS newProcedure;
+
+DELIMITER $$
+USE company$$
+CREATE PROCEDURE newProcedure ()
+BEGIN
+SELECT fio FROM employee
+ORDER BY salary
+LIMIT 1;
+END$$
+
+DELIMITER ;
+
+CALL newProcedure;
+
+
+
+
+
+
+USE company;
+DROP procedure IF EXISTS newProcedure;
+
+DELIMITER $$
+USE company$$
+CREATE PROCEDURE newProcedure ()
+BEGIN
+SELECT fio FROM employee
+WHERE salary = (SELECT MAX(salary) FROM employee);
+END$$
+
+DELIMITER ;
+
+CALL newProcedure;

@@ -1,0 +1,2 @@
+$ mvn archetype:generate -DgroupId=ru.easyjava.junit -DartifactId=hellojunit -Dversion=1  -DinteractiveMode=false
+

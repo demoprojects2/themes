@@ -1,0 +1,296 @@
+JMM:
+Освобождение (releasing) монитора happens-before заполучения (acquiring) того же самого монитора.
+Запись в volatile переменную happens-before чтения из той же самой переменной.
+Запись значения в final-поле happens-before чтения значения из этого поля.
+
+happens-before значит, что следующая операция блокируется или же она просто получает предыдущее актуальное значение?
+
+JMC - это расширенный набор инструментов, который позволяет эффективно и детально анализировать обширные данные работы JVM. 
+JVisualVM - инструмент, позволяющий мониторить выполнение и прозводительность методов, снимать дампы, анализировать производительность, состояния потоков и памяти. 
+VisualGC - плагин для наблюдения распределения памяти по различным областям. 
+JConsol - инстумент, который предоставляет информацию о производительности и потреблении ресурсов приложений. 
+JMeter — инструмент для проведения нагрузочного тестирования
+
+VOLATILE:
+1) Каждое чтение и запись volatile переменной происходит одним потоком одновременно. (? Или только операции связанные с записью (RW, WR, WW)?)
+2) При каждом чтении/записи видно актуальное значение переменной.
+
+БЕЗ happens-before:
+поток может увидеть абсолютно любое закешированное значение переменной или даже межсостояние этой переменной.
+
+VOLATILE:
+1) atomacity to non atomics (64 bits long, double) and References;
+2) actual non cached values to all.
+
+visibility = видит всё, что было в другом поток до этого момента.
+atomacity = блокировка для всех других потоков, пока выполняются действия в данном потоке.
+
+happens-before видит либо последнее значение в hf нити, либо любое другое из значений, которое выходит за hb.
+
+volatile = visibility
+synchronization = visibility + atomacity
+You can use volatile variables only when all the following criteria are met:
+• Writes to the variable do not depend on its current value, or you can ensure
+that only a single thread ever updates the value;
+• The variable does not participate in invariants with other state variables;
+and
+• Locking is not required for any other reason while the variable is being
+accessed.
+
+
+sequential consistency = as if a multithreading program works like some singlethrading one in a single order with normal visibility.
+Possible reordering = строчки выполняются разными thread'ами не в том порядке, в котором были написаны.
+	Synchronization препятствует компайлеру, рантайму и hardware от реордеринга операций с памятью, чтобы они не нарушали гарантии visibility JVM
+
+JMM defines a partial ordering called "happens-before" on actions within the program. Без happens-before JMV может реордирить действия как захочет.
+
+A correctly synchronized program is one with no data races and the exhibit sequential consistency.
+
+The rules of happens-before are:
+1) Program order rule. Each action in a thread happens-before every action in that thread that comes later in the program order;
+2) Monitor lock rule. An unlock on a monitor lock happens-before every subsequent lock on that same monitor lock;
+3) Volatile variable rule. A write to a volatile field happens-before every subsequent read of that same field;
+4) Thread start rule. A call to Thread.start on a thread happens-before every action in the started thread;
+5) Thread termination rule. Any action in a thread happens-before any other thread detects that thread has terminated, 
+	either by successfully return from Thread.join or by Thread.isAlive returning false;
+6) Interruption rule. A thread calling interrupt on another thread happens-before the interrupted thread detects the interrupt 
+	(either by having InterruptedException thrown, or invoking isInterrupted or interrupted);
+7) Finalizer rule. The end of a constructor for an object happens-before the start of the finalizer for that object;
+8) Transitivity. If A happens-before B, and B happens-before C, then A happens-before C.
+
+Piggybacking - это когда пользуешься созданными для других целей happens-before для своей цели.
+
+Placing an item in a thread-safe collection happens-before another thread retrieves that item from the collection;
+Counting down on a CountDownLatch happens-before a thread returns from await on that latch;
+Releasing a permit to a Semaphore happens-before acquiring a permit from that same Semaphore;
+Actions taken by the task represented by a Future happens-before another thread successfully returns from Future.get;
+Submitting a Runnable or Callable to an Executor happens-before the task begins execution;
+A thread arriving at a CyclicBarrier or Exchanger happens-before the other threads are released from that same barrier or exchange point. 
+	If CyclicBarrier uses a barrier action, arriving at the barrier happens-before the barrier action, which in turn happens-before threads are released from the barrier
+	
+Initialization safety guarantees that for properly constructed objects, all
+threads will see the correct values of final fields that were set by the constructor, regardless of how the object is published. Further, any variables
+that can be reached through a final field of a properly constructed object
+(such as the elements of a final array or the contents of a HashMap referenced by a final field) are also guaranteed to be visible to other threads. 
+This applies only to objects that are reachable only through final fields of the object under construction.
+For objects with final fields, initialization safety prohibits reordering any part
+of construction with the initial load of a reference to that object. All writes to final
+fields made by the constructor, as well as to any variables reachable through those
+fields, become “frozen” when the constructor completes, and any thread that
+obtains a reference to that object is guaranteed to see a value that is at least as up
+to date as the frozen value. Writes that initialize variables reachable through final
+fields are not reordered with operations following the post-construction freeze
+Initialization safety makes visibility guarantees only for the values that
+are reachable through final fields as of the time the constructor finishes.
+For values reachable through nonfinal fields, or values that may change
+after construction, you must use synchronization to ensure visibility.
+
+Summary
+The Java Memory Model specifies when the actions of one thread on memory are
+guaranteed to be visible to another. The specifics involve ensuring that operations
+are ordered by a partial ordering called happens-before, which is specified at the
+level of individual memory and synchronization operations. In the absence of
+sufficient synchronization, some very strange things can happen when threads
+access shared data. However, the higher-level rules offered in Chapters 2 and
+3, such as @GuardedBy and safe publication, can be used to ensure thread safety
+without resorting to the low-level details of happens-before.
+
+
+
+
+GARBAGE COLLECTORS
+
+Ways to call gc:
+System.gc() 
+Runtime.getRuntime().gc()
+
+protected void finalize() throws Throwable is called when GC works
+
+Note:
+The finalize() method called by Garbage Collector not JVM. Although Garbage Collector is one of the module of JVM.
+Object class finalize() method has empty implementation, thus it is recommended to override finalize() method to dispose of system resources or to perform other cleanup.
+The finalize() method is never invoked more than once for any given object.
+If an uncaught exception is thrown by the finalize() method, the exception is ignored and finalization of that object terminates.
+
+1. Unreferenced objects are identified and marked as ready for garbage collection
+2. Marked objects are deleted
+Optionally, memory can be compacted after the garbage collector deletes objects. 
+	The compaction process makes it easier to allocate memory to new objects sequentially after the block of memory allocated to existing objects.
+	
+All of HotSpot’s garbage collectors implement a generational garbage collection strategy that categorizes objects by age.
+
+	  survivor space
+eden |  s0  |  s1   || tenured || permanent
+    young gen    	   old gen    permanent gen
+
+Young Generation: Newly created objects start in the Young Generation. The Young Generation is further subdivided into an Eden space, 
+	where all new objects start, and two Survivor spaces, where objects are moved from Eden after surviving one garbage collection cycle. 
+	When objects are garbage collected from the Young Generation, it is a minor garbage collection event.
+Old Generation: Objects that are long-lived are eventually moved from the Young Generation to the Old Generation. 
+	When objects are garbage collected from the Old Generation, it is a major garbage collection event.
+Permanent Generation: Metadata such as classes and methods are stored in the Permanent Generation. 
+	Classes that are no longer in use may be garbage collected from the Permanent Generation.
+	
+During a full garbage collection event, unused objects in all generations are garbage collected.
+
+
+
+
+HotSpot has four garbage collectors:
+
+Serial: All garbage collection events are conducted serially in one thread. Compaction is executed after each garbage collection.
+	The serial collector is the simplest one, and the one you probably won’t be using, as it’s mainly designed for single-threaded environments 
+	(e.g. 32 bit or Windows) and for small heaps. This collector freezes all application threads whenever it’s working, which disqualifies it for 
+	all intents and purposes from being used in a server environment.
+	You can use it by turning on the -XX:+UseSerialGC JVM argument.
+	Проходит в одном потоке. Блокирует поток, удаляет мусор, комплектует объекты, разблокирует поток.
+Parallel: Multiple threads are used for minor garbage collection. A single thread is used for major garbage collection and Old Generation compaction. 
+	Alternatively, the Parallel Old variant uses multiple threads for major garbage collection and Old Generation compaction.
+	This is the JVM’s default collector. Much like its name, its biggest advantage is that is uses multiple threads to scan through and compact the heap. 
+	The downside to the parallel collector is that it will stop application threads when performing either a minor or full GC collection. 
+	The parallel collector is best suited for apps that can tolerate application pauses and are trying to optimize for lower CPU overhead caused 
+	by the collector.
+	Проходит во многих потоках параллельно и укладывает хип. Также замораживает приложение, зато потребляет мало CPU.
+CMS (Concurrent Mark Sweep): Multiple threads are used for minor garbage collection using the same algorithm as Parallel. 
+	Major garbage collection is multi-threaded, like Parallel Old, but CMS runs concurrently alongside application processes to minimize “stop the world” events 
+	(i.e. when the garbage collector running stops the application). No compaction is performed.
+	This algorithm uses multiple threads (“concurrent”) to scan through the heap (“mark”) for unused objects that can be recycled (“sweep”). 
+	This algorithm will enter “stop the world” (STW) mode in two cases: when initializing the initial marking of roots (objects in the old generation 
+	that are reachable from thread entry points or static variables) and when the application has changed the state of the heap while the algorithm was running 
+	concurrently, forcing it to go back and do some final touches to make sure it has the right objects marked.
+	You have to specify XX:+USeParNewGC to actually enable it. If you’re willing to allocate more CPU resources to avoid application pauses this is the collector 
+	you’ll probably want to use, assuming that your heap is less than 4Gb in size.  However, if it’s greater than 4GB, you’ll probably want to use the last algorithm – the G1 Collector.
+	Как parallel, только сводит остановки приложения к минимуму и не укладывает объекты, но потребляет больше ресурсов.
+G1 (Garbage First): The newest garbage collector is intended as a replacement for CMS. It is parallel and concurrent like CMS, 
+	but it works quite differently under the hood compared to the older garbage collectors.
+	This collector is turned on using the –XX:+UseG1GC flag.
+	The G1 also has another advantage that is that it compacts the heap on-the-go, something the CMS collector only does during full STW collections.
+	Как CMS, только укладывает ещё укладывает объекты.
+	
+Another beautiful optimization which was just out with Java 8 update 20 for is the G1 Collector String deduplication. 
+You can use the -XX:+UseStringDeduplicationJVM argument to try String deduplication out.
+
+One of the biggest changes made in Java 8 was removing the permgen part of the heap that was traditionally allocated for class meta-data, interned strings and static variables.
+
+
+
+
+JVM MEMORY
+Heap. JMV has a heap, которым пользуются всех thread'ы JVM. Heap - область run-time область данных, где расположена память всех объектов и массивов.
+ Heap создаётся при старте JVM. GC удаляет из хипа объекты, на которые больше нет явных ссылок. Выбирать нужные GC и управлять размером хипа могут сами разработчики.
+ 
+The pc register. Each Java Virtual Machine thread has its own pc (program counter) register.
+	At any point, each Java Virtual Machine thread is executing the code of a single method, namely the current method.
+	If that method is not native, the pc register contains the address of the Java Virtual Machine instruction currently being executed. 
+	If the method currently being executed by the thread is native, the value of the Java Virtual Machine's pc register is undefined. 
+	The Java Virtual Machine's pc register is wide enough to hold a returnAddress or a native pointer on the specific platform.
+	
+Java Virtual Machine Stacks.
+	Each Java Virtual Machine thread has a private Java Virtual Machine stack, created at the same time as the thread. A Java Virtual Machine stack stores frames (§2.6). 
+	A Java Virtual Machine stack is analogous to the stack of a conventional language such as C: it holds local variables and partial results, and plays a part in method invocation and return. 
+	Because the Java Virtual Machine stack is never manipulated directly except to push and pop frames, frames may be heap allocated. 
+	The memory for a Java Virtual Machine stack does not need to be contiguous.
+	
+	This specification permits Java Virtual Machine stacks either to be of a fixed size or to dynamically expand and contract as required by the computation. 
+	If the Java Virtual Machine stacks are of a fixed size, the size of each Java Virtual Machine stack may be chosen independently when that stack is created.
+	Управлять размером стэков могут сами разработчики.
+	
+Method Area
+	The Java Virtual Machine has a method area that is shared among all Java Virtual Machine threads. The method area is analogous to the storage area for compiled code of a conventional language or analogous to the "text" segment in an operating system process. It stores per-class structures such as the run-time constant pool, field and method data, and the code for methods and constructors, including the special methods (§2.9) used in class and instance initialization and interface initialization.
+	The method area is created on virtual machine start-up. Although the method area is logically part of the heap, simple implementations may choose not to either garbage collect or compact it. This specification does not mandate the location of the method area or the policies used to manage compiled code. The method area may be of a fixed size or may be expanded as required by the computation and may be contracted if a larger method area becomes unnecessary. The memory for the method area does not need to be contiguous.
+	A Java Virtual Machine implementation may provide the programmer or the user control over the initial size of the method area, as well as, in the case of a varying-size method area, control over the maximum and minimum method area size.
+	The following exceptional condition is associated with the method area:
+	If memory in the method area cannot be made available to satisfy an allocation request, the Java Virtual Machine throws an OutOfMemoryError.
+
+Run-Time Constant Pool
+	A run-time constant pool is a per-class or per-interface run-time representation of the constant_pool table in a class file (§4.4). It contains several kinds of constants, ranging from numeric literals known at compile-time to method and field references that must be resolved at run-time. The run-time constant pool serves a function similar to that of a symbol table for a conventional programming language, although it contains a wider range of data than a typical symbol table.
+	Each run-time constant pool is allocated from the Java Virtual Machine's method area (§2.5.4). The run-time constant pool for a class or interface is constructed when the class or interface is created (§5.3) by the Java Virtual Machine.
+	The following exceptional condition is associated with the construction of the run-time constant pool for a class or interface:
+	When creating a class or interface, if the construction of the run-time constant pool requires more memory than can be made available in the method area of the Java Virtual Machine, the Java Virtual Machine throws an OutOfMemoryError.
+	
+Native Method Stacks
+	An implementation of the Java Virtual Machine may use conventional stacks, colloquially called "C stacks," to support native methods (methods written in a language other than the Java programming language). Native method stacks may also be used by the implementation of an interpreter for the Java Virtual Machine's instruction set in a language such as C. Java Virtual Machine implementations that cannot load native methods and that do not themselves rely on conventional stacks need not supply native method stacks. If supplied, native method stacks are typically allocated per thread when each thread is created.
+	This specification permits native method stacks either to be of a fixed size or to dynamically expand and contract as required by the computation. If the native method stacks are of a fixed size, the size of each native method stack may be chosen independently when that stack is created.
+	A Java Virtual Machine implementation may provide the programmer or the user control over the initial size of the native method stacks, as well as, in the case of varying-size native method stacks, control over the maximum and minimum method stack sizes.
+	The following exceptional conditions are associated with native method stacks:
+	If the computation in a thread requires a larger native method stack than is permitted, the Java Virtual Machine throws a StackOverflowError.
+	If native method stacks can be dynamically expanded and native method stack expansion is attempted but insufficient memory can be made available, or if insufficient memory can be made available to create the initial native method stack for a new thread, the Java Virtual Machine throws an OutOfMemoryError.
+===================================================================================================================
+
+ 
+ Java Visual VM <--- можно подключаться к существующим java-процессам и получать инфу о них
+
+ Свойства класса, помеченные модификатором transient, не сериализуются.
+  Обычно в таких полях хранится промежуточное состояние объекта, которое, к примеру, проще вычислить, чем сериализовать, а затем десериализавать. 
+  Другой пример такого поля - ссылка на экземпляр объекта, который не требует сериализации или не может быть сериализован.
+
+
+В рунтайме jvm может иметь 6-ть областей памяти. 
+Области уникальные для каждого потока: 
+ 1. pc (program counter) - разные указатели и мета-информация о потоке 
+ 2. jvm stack - то что мы и привыкли называть стеком, здесь хранятся фреймы (инфа о текущем запущенном методе) 
+ 3. Native Method Stacks - отдельный стек для нативных методов 
+Общие области: 
+ 4. Heap - хранилище объектов и область владения сборщика мусора 
+ 5. Method Area - хранит структуры каждого класса, такие как пул постоянной времени ( run-time constant pool) выполнения, данные полей и методов, а также код методов и конструкторов, 
+	 включая специальные методы, используемые при инициализации класса и экземпляра и инициализации интерфейса! И самое интересное! Метод Эриа может как обрабатываться сборщиком так и нет! 
+	 Если нет она будет очищена после инициализации классов и запуска программы. 
+ 6. Run-Time Constant Pool - да, оказывается для всех пулов (String pool, Integer pool и тд) есть отдельная область памяти! 
+
+Путаница возникает когда начинают смешивать понятия "область памяти" и "области работы сборщика мусора" Основная область обитания GC - heap, именно пространство хипа он условно делит для себя 
+на young и tenured дженерэйшен. И вот тут фокус покус: если мы разрешаем GC лезть в область Method Area от GC ставит галочку для себя мол это отдельное пространство за которым он должен следить 
+и для себя он отмечает это отдельное пространство как Methaspace или иначе - Class Metadata. В Class Metadata кроме Method Area, ещё входит информация о том что находится в Run-Time Constant Pool. 
+И в целом говорить о том что heap делится на tenured и young дженерэйшн не совсем корректно. Heap не на что не делится. А вот при работе с 'неделимым' хипом GC помечает для себя отдельные области 
+(это GC для себя делит хип) как tenured и young дженерэйшн. Точно также Methaspace - это некое название которым пользуется GC. И такой области памяти нет. Поправьте если я что-то неправильно понимаю. 
+https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.5 
+https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/generations.html#sthref16 
+https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/considerations.html#sthref62
+===================================================================================================================
+
+JVM
+JRE = JVM + libraries (rt.jar(JCL – Java Class Library))
+JDK = JRE + compilators(javac) + debuggers + utilities
+
+JVM: 
+WORA Write Once Run Anywhere
+
+1. Class Loader Subsystem;
+	1) Loading. Bootstrap, Extension, Application(System);
+	2) Linking;
+		1) Verify. Bytecode from .class file;
+		2) Prepare. Static variables with default values;
+		3) Resolve. заменяет все ссылки на символическую память (symbolic memory references) на
+			настоящие ссылки (original references) из Method Area.
+	3) Initialization. Statics and execution static blocks.
+2. Runtime Data Area;
+	1) Heap Area. Shared resource. Initial and max memory -Xms и –Xmx;
+	2) Method Area. Хранит все данные уровня класса, включая статические переменные. Shared resource;
+		Место, где хранится байт-код. Счетчик программы (Program Counter/PC) указывает на некоторый байт в зоне методов. 
+		Он также отслеживает текущую команду/инструкцию, которая сейчас выполняется (интерпретируется). 
+		После выполнения инструкции JVM устанавливает PC на следующую команду.
+	3) Run-Time Constant Pool. It contains several kinds of constants, ranging from numeric literals known at compile-time to method and field references that must be resolved at run-time. It is in Method Area;
+	4) Stack Area (Java Virtual Machine Stacks). Memory -Xss. Для своей работы стек использует 3 регистра, которые называются vars, frame, optop и уrазывают на различные части текущего стека;
+		Stack Frame подразделяется на несколько составляющих:
+			1) Local Variable Array. Хранит количество локальных переменных, обрабатываемых в методе и соотвествующие им значения;
+			2) Operand Stack. Является рабочим пространством на (runtime workspace) для выполнения промежуточных действий. 
+				Используется инструкциями байт-кода в качестве рабочего пространства (здесь размещены параметры для инструкций и здесь ищутся результаты выполнения этих инструкций). 
+				На вершину стека операндов казывает регистр optop;
+			3) Frame Data. Хранит все обозначения, соответствующие методам. В случае возникновения исключения блок catch block information will be maintained in the frame data.
+			4? or =3?) Execution environment используется для обслуживания операций самого стека. На эту секцию указывает регистор frame;
+		Итого: все методы хранятся в сетеке и попадают туда при вызове.  Переменные в методах также имеют стековую память. Если в методе создается объект, то он помещается в кучу, но его ссылка помещается в стек.
+	5) Native Method stacks. Хранит информацию о нативных методахж
+	6) The pc register (PC - program counter, программный счётчик). каждый поток имеет отдельно свои регистры для хранения адреса текущей выполняемой инструкции (current execution instruction). 
+		Как только операция завершается регистр программного счетчика обновляется значением следующей инструкции.
+3. Execution Engine. Байт-код, хранящийся в Runtime Data Area выполняется Execution Engine. Механизм выполнения считывает байт-код и выполняет последовательно;
+	1) Interpreter. Последовательно считывает байт-код, интерпретирует его и выполняет. Интерпретатор интерпретирует байт-код быстрее, но выполняет медленнее. 
+		Недостатком интерпретатора является то, что при вызове одного и того же метода несколько раз, интерпретация происходит каждый раз;
+	2) JIT Compiler (Just-In-Time). JIT компилятор устраняет недостаток интерпретатора. Механизм выполнения использует интерпретатор для преобразования, 
+		но, как только находит повторяющийся код, он начинает использовать JIT компилятор, который уже компилирует весь байт-код целиком и преобразует его в нативный/родной/машинный код. 
+		Данный машинный код будет использоваться напрямую для повторяющихся методов(например, циклов), что улучшает производительность системы.
+		1. Intermediate Code generator – создает промежуточный код.
+		2. Code Optimizer – отвечает за оптимизацию промежуточного кода.
+		3. Target Code Generator – отвечает за создание машинного/нативного кода (Generating Machine Code/ Native Code).
+		4. Profiler – отвечает за поиск хотспотов (горячих точек), которые используются для пометки того, вызывается ли метод несколько раз, или нет.
+	3) Garbage Collector. System.gc(). Собирает только объекты, которые были созданы с использованием ключевого слова new;
+	4) Java Native Interface (JNI). Взаимодействует с Native Method Libraries и предоставляет механизму выполнения доступ к ним;
+	5) Native Method Libraries Представляет собой Collection of the Native Libraries, которые необходимы механизму выполнения.

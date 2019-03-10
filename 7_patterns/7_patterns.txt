@@ -1,0 +1,345 @@
+делегат
+фасад
+
+адаптер
+
+декоратор
+
+синглтон
+фабричный метод
+абстрактная фабрика
+
+строитель
+
+стратегия
+наблюдатель
+
+команда
+
+Порождающие паттерны Создание. беспокоятся о гибком создании объектов без внесения в программу лишних зависимостей.
+
+Структурные паттерны Связи. показывают различные способы построения связей между объектами.
+
+Поведенческие паттерны Коммуникация. заботятся об эффективной коммуникации между объектами.
+
+Антипаттерны:
+Singleton
+
+А ------> В     А создаёт В
+А ______> В     А имеет в себе и использует В
+А ______|>В     А наследует В
+А <>____> В		А содержит в себе множество В
+А ------|>В		А implements В
+
+
+
+
+Monolithic Applications:
++ Well Known: This is how typically applications have been built so far. Its easy to conceptualize and all the code is in one place. 
+	Majority of existing tools, application servers, frameworks, scripts are able to deal with such kind of applications.
++ IDE-friendly: Development environments, such as NetBeans, Eclipse, or IntelliJ, can be easily setup for such applications. 
+	IDEs are typically designed to develop, deploy, debug, profile a single application easily. Stepping through the code base is easy because the codebase is all together.
++ Easy Sharing: A single archive, with all the functionality, can be shared between teams and across different stages of deployment pipeline.
++ Simplified Testing: Once the application is deployed successfully, all the services, or features, are up and available. 
+	This simplifies testing as there are no additional dependencies to wait for in order for the testing to begin. Either the application is available, 
+	in which case all features are available, or the application is not available at all. Accessing or testing the application is simplified in either case.
++ Easy Deployment: Easy to deploy since, typically, a single archive needs to be copied to one directory. 
+	The deployment times could vary but the process is pretty straight forward.
+	
+- Limited Agility: Every tiny change to the application means full redeployment of the archive. Consider the use case where only one piece of functionality 
+	in the application needs to be updated, such as booking or add/delete movie. This would require the entire application to be built again, 
+	and deployed again, even though other parts of the application has not changed. This means that developers will have to wait for the entire application 
+	to be deployed if they want to see the impact of quick change made in their workspace. Even if not intentional, but this may require tight coupling between 
+	different features of the application. This may not be possible all the time, especially if multiple developers are working on the application. 
+	This reduces agility of the team and the frequency by which new features can be delivered.
+- Obstacle for continuous delivery: The sample application used here is rather small so the time it takes to rebuild and deploy the archive would not be noticeable much. 
+	But a real-life application would be much bigger, and deployment times can be frustratingly long and slow. If a single change to the application would require entire application 
+	to be redeployed then this could become an obstacle to frequent deployments, and thus an impediment of continuous deployment. This could be a serious issue if you are serving 
+	a mobile application where users expect latest cool new feature all the time.
+- “Stuck” with Technology Stack: Choice of technology for such applications are evaluated and decided before the application development starts. 
+	Everybody in the team is required to use the same language, persistence stores, messaging system, and use similar tools to keep the team aligned. 
+	But this is like fitting a square peg in a round hole. Is MySQL an appropriate data store for storing graph databases? Is Java the most appropriate language 
+	for building front-end reactive applications? Its typically not possible to change technology stack mid stream without throwing away or rewriting significant part of existing application.
+- Technical Debt: “Not broken, don’t fix it” methodology is very common in software developed, more so for monolithic applications. 
+	This is convenient and enables to keep the application running.  A poor system design or badly written code is that much difficult to modify 
+	because other pieces of the application might be using it in unexpected ways. Software entropy of the system increases over a period of time unless it is refactored. 
+	Typically such an application is built over several years with the team that is maintaining the code base completely different from the one that created the application. 
+	This increases technical debt of the application and makes it that much harder to refactor the application later on.
+	
+Microservices Applications:
+Microservices is a software architectural style that require functional decomposition of an application. A monolithic application is broken down into multiple smaller services, 
+each deployed in its own archive, and then composed as a single application using standard lightweight communication, such as REST over HTTP. 
+The term “micro” in microservices is no indication of the LOCs in the service, it only indicates the scope is limited to a single functionality.
+
+Characteristics of Microservices
+Lets look at the characteristics of an application built using microservices.
+
+Domain Driven Design: Functional decomposition of an application can be achieved using well-defined principles of Domain Driven Design by Eric Evans. This is not the only way to break down the applications but certainly a very common way. Each team is responsible for building the entire functionality around that domain or function of the business. Teams building a service include full range of developers, thus following the full-stack development methodology, and include skills for user interface, business logic, and persistence.
+Single Responsibility Principle: Each service should have responsibility over a single part of the functionality, and it should do that well. This is one of the SOLID principles and has been very well demonstrated by Unix utilities.
+Explicitly Published Interface: Each service publishes an explicitly defined interface and honors that all times. The consuming service only cares about that interface, and does not, rather should not, have any runtime dependency on the consumed service. The services agree upon the domain models, API, payload, or some other contract and they communicate using only that. A newer version of the interface may be introduced, but either the previous versions will continue to exist or the newer services are backwards compatible. You cannot break compatibility by changing contracts.
+Independently Deploy, Upgrade, Scale, Replace: Each service can be independently deployed, and redeployed again, without impacting the overall system. This allows a service to be easily upgraded, for example to add more features. Each service can also scale independently on X-axis (horizontal duplication) or Z-axis (lookup oriented splits) as defined in Art of Scalability. Implementation of the service, or even the underlying technology stack, can change as long as the exact same contract is published. This is possible because other services rely only upon the published interface.
+Potentially Heterogeneous/Polyglot: Implementation detail of the one service should not matter to another service. This enables the services to be decoupled from each other, and allows the team building the service to pick the language, persistence store, tools, methodology that is most appropriate for them. A service that requires to store data in a RDBMS can choose MySQL, and another service that needs to store documents can choose Mongo. Different teams can choose Java EE, NodeJS, Python, Vert.x, or whatever is most efficient for them.
+Light-weight Communication: Services communicate with each other using a light-weight communication, such as REST over HTTP. This is inherently synchronous and so could have some potential bottle necks. An alternative mechanism is to use publish-subscribe mechanism that supports asynchronous messaging. Any of the messaging protocols such as AMQP, STOMP, MQTT, or WebSocket that meet the needs can be used there. Simple messaging implementations, such as ActiveMQ, that provide a reliable asynchronous fabric are quite appropriate for such usages. The choice of synchronous and asynchronous messaging is very specific to each service. They can even use a combination of the two approaches. Similarly the choice of protocol is very specific to each service but there is enough choice and independence for each team building the service.
+
+Advantages of Microservices
+Easier to develop, understand, and maintain: Code in a microservice is restricted to one function of the business and is thus easier to understand. IDEs can load the small code base very easily and keep the developers productive.
+Starts faster than a monolith: Scope of each microservice is much smaller than a monolith and this leads to a smaller archive. As a result the deployment and the startup is much faster keeping developers productive.
+Local change can be easily deployed: Each service can be deployed independent of other services. Any change local to the service can be easily made by the developer without requiring coordination with other teams. For example, performance of a service can be improved by changing the underlying implementation. As a result this keeps the agility of the microservice. This is also a great enabler of CI/CD.
+Scale independently: Each service can scale independently using X-axis cloning and Z-axis partitioning based upon their need. This is very different from monolithic applications that may have very different requirements and yet must be deployed together.
+Improves fault isolation: A misbehaving service, such as with a memory leak or unclosed database connections, will only affect that service as opposed to the entire monolithic application. This improves fault isolation and does not brings the entire application down, just a piece of it.
+No long term commitment to any stack: Developers are free to pick language and stack that is best suited for their service. Even though the organizations may restrict the choice of technology but you are not penalized because of past decisions. It also enables to rewrite the service using better languages and technologies. This gives freedom of choice to pick a technology, tools, and frameworks.
+
+Microservices and NoOps
+This imposes additional requirements on your infrastructure. These are commonly put together and called as NoOps. Essentially these are a set of services that provide a better process for deploying applications, and keep them running.
+
+Service replication: Each service need to replicate, typically using X-axis cloning or Y-axis partitioning. Does each service need to build their logic to scale? For example, Kubernetes provide a great way to replicate services easily using Replication Controller.
+Service discovery: Multiple services might be collaborating to provide an application’s functionality. This will require a service to discover other services. It could be tricky in a cloud environment where the services are ephemeral and possibly scale up and down. Resolving the services that are required for a service is thus a common functionality for all other services. Services need to register with a central registry and other services need to query this registry for resolving any dependencies. Netflix Eureka, Etcd, Zookeeper are some options in this space (more details).
+Resiliency: Failure in software occurs, no matter how much and how hard you test it. The key question is not “how to avoid failure” but “how to deal with it”. This is all the more prominent in microservices where services are distributed all over the Internet. Its important for services to automatically take corrective action and ensure the user experience is not impacted. Michael Nygard’s book Release It! introducs Circuit Breaker pattern to deal with software resiliency. Netflix’s Hystrix provide an implementation of this design pattern (more details).
+Service monitoring: One of the most important aspects of a distributed system is service monitoring and logging. This allows to take a proactive action, for example, if a service is consuming unexpected resources.
+
+Microservices also does not mean you need to throw away your existing application. Rather in majority (99.9%?) cases, you cannot throw away the application. So you’ve to build a methodology on how to refactor an existing application using microservices. However you need to bring your monolith to a stage where it is ready for refactoring. As Distributed big balls of mud highlight:
+Refactoring may not be trivial but in the long terms this has benefits: Refactoring a big monolithic application [using microservices] can be the equivalent of a balloon payment [for reducing technical debt] … you can pay down technical debt one service at a time
+Functional decomposition of a monolith is very important otherwise it becomes a distributed monolith as opposed to a microservice based application.
+
+1. Концептуальное предназначение SOA (service oriented architecture)?
+Разделить приложение на независимые сервисы, взаимодействующие друг с другом и окружающей средой.
+В идеале можно заменить один сервис другим со схожим функционалом, и система останется работать также, никто даже не
+заметит, что сервис был изменён.
+
+Сервис-ориентированная архитектура - модульный подход к
+построению ИТ-инфраструктуры предприятия, основанный на
+использовании распределенных, слабо связанных заменяемых
+компонентов, оснащённых стандартизированными интерфейсами для
+взаимодействия по стандартизированным протоколам
+
+• Приложение состоит из множества слабо связанных сервисов, которые общаются
+друг с другом с ипользованием четко определенного API (Loosely Coupling)
+• Сервисы ничего не знают о клиентах, их задача – оказывать сервис (Location
+transparency)
+• Клиента не волнует каким образом работает сервис (Autonomy)
+• Сервисы используют другие сервисы (Reusability)
+• Не хранят состояние (Statelessness)
+
+
+MicroService
+	если одна часть вышла из строя, система всё равно продолжает работать.
+	проще разобраться в коде, расширять систему и заменять сервисы другими, когда всё разделено на мелкие кусочки.
+	деплой проще, так как деплоить можно по частям
+	но добавляют сложности, поэтому для маленьких систем лучше использовать monolithic
+	сложнее мониторить систему в целом
+Monolithic
+	система проще может упасть полностью.
+	сложнее разобраться в коде, когда все в одном месте.
+	деплоится сразу вся система.
+	если нужно расширить систему, это часто будет означать расширить всё в системе.
+	
+	
+
+Benefits
+	Deployability: more agility to roll out new versions of a service due to shorter build+test+deploy cycles. Also, flexibility to employ service-specific security, replication, persistence, and monitoring configurations.
+	Reliability: a microservice fault affects that microservice alone and its consumers, whereas in the monolithic model a service fault may bring down the entire monolith.
+	Availability: rolling out a new version of a microservice requires little downtime, whereas rolling out a new version of a service in the monolith requires a typically slower restart of the entire monolith.
+	Scalability: each microservice can be scaled independently using pools, clusters, grids. The deployment characteristics make microservices a great match for the elasticity of the cloud.
+	Modifiability: more flexibility to use new frameworks, libraries, datasources, and other resources. Also, microservices are loosely-coupled, modular components only accessible via their contracts, and hence less prone to turn into a big ball of mud.
+	Management: the application development effort is divided across teams that are smaller and work more independently.
+	Design autonomy: the team has freedom to employ different technologies, frameworks, and patterns to design and implement each microservice, and can change and redeploy each microservice independently
+Challenges
+	Deployability: there are far more deployment units, so there are more complex jobs, scripts, transfer areas, and config files to oversee for deployment. (For that reason, continuous delivery and DevOps are highly desirable for microservice projects.)
+	Performance: services more likely need to communicate over the network, whereas services within the monolith may benefit from local calls. (For that reason, the design should avoid "chatty" microservices.)
+	Modifiability: changes to the contract are more likely to impact consumers deployed elsewhere, whereas in the monolithic model consumers are more likely to be within the monolith and will be rolled out in lockstep with the service. Also, mechanisms to improve autonomy, such as eventual consistency and asynchronous calls, add complexity to microservices.
+	Testability: integration tests are harder to setup and run because they may span different microservices on different runtime environments.
+	Management: the effort to manage operations increases because there are more runtime components, log files, and point-to-point interactions to oversee.
+	Memory use: several classes and libraries are often replicated in each microservice bundle and the overall memory footprint increases.
+	Runtime autonomy: in the monolith the overall business logic is collocated. With microservices the logic is spread across microservices. So, all else being equal, it's more likely that a microservice will interact with other microservices over the network--that interaction decreases autonomy. If the interaction between microservices involves changing data, the need for a transactional boundary further compromises autonomy. The good news is that to avoid runtime autonomy issues, we can employ techniques such as eventual consistency, event-driven architecture, CQRS, cache (data replication), and aligning microservices with DDD bounded contexts. These techniques are not inherent to microservices, but have been suggested by virtually every author I've read.	
+	
+	
+
+
+Для создания качественной микросервисной архитектуры необходимо четко разделить функции в вашем приложении и команде. Так можно достичь слабого связывания (REST-интерфейсы) и сильного сцепления (множество сервисов могут компоноваться вместе, определяя более высокоуровневые сервисы или приложение).
+Создание «глаголов» (напр. Checkout) или «существительных» (Product) в составе приложения — один из эффективных способов декомпозиции имеющегося кода. Например, product, catalog и checkout могут быть реализованы как три отдельных микросервиса, а затем взаимодействовать друг с другом, обеспечивая полный функционал корзины заказов. 
+
+Паттерн Агрегатор (Aggregator). В простейшей форме агрегатор представляет собой обычную веб-страницу, вызывающую множество сервисов для реализации функционала, требуемого в приложении. Поскольку все сервисы (Service A, Service B и Service C) предоставляются при помощи легковесного REST-механизма, веб-страница может извлечь данные и обработать/отобразить их как нужно. Если требуется какая-либо обработка, например, применить бизнес-логику к данным, полученным от отдельных сервисов, то для этого у вас может быть CDI-компонент, преобразующий данные таким образом, чтобы их можно было вывести на веб-странице. 
+Этот паттерн следует принципу DRY. Если существует множество сервисов, которые должны обращаться к сервисам A, B и C, то рекомендуется абстрагировать эту логику в составной микросервис и агрегировать ее в виде отдельного сервиса. 
+Паттерн Посредник (Proxy)
+Паттерн проектирования «Цепочка» (Chained)
+Паттерн проектирования «Ветка» (Branch)
+Паттерн «Разделяемые данные» (Shared Data)
+Паттерн «Асинхронные сообщения» (Asynchronous Messaging)
+
+
+
+Что такое микросервисы?
+Это архитектурный шаблон, в котором сервисы:
+
+маленькие (small),
+сфокусированные (focused),
+слабосвязанные (loosely coupled),
+высокосогласованные (highly cohesive).
+
+Что значит «маленький» сервис? Это значит, что сервис в микросервисной архитектуре не может разрабатываться больше чем одной командой. Обычно одна команда разрабатывает где-то 5 – 6 сервисов. При это каждый сервис решает одну бизнес-задачу, и его способен понять один человек. Если же не способен, сервис пора пилить. Потому что, если один человек способен поддерживать всю бизнес-логику одного сервиса, он построит действительно эффективное решение. Ведь бывает так, что зачастую люди, принимая решения в процессе написания кода, просто-напросто не понимают, что именно делают — не знают, как ведет себя система в целом. А если сервис маленький, все намного проще. Этот подход, кстати, мы можем применять отдельно, даже не следуя микросервисной архитектуре в целом.
+Что значит «сфокусированный» сервис? Это значит, что сервис решает только одну бизнес-задачу, и решает ее хорошо. Такой сервис имеет смысл в отрыве от остальных сервисов. Другими словами, вы его можете выложить в интернет, дописав security-обертку, и он будет приносить людям пользу.
+Что такое «слабосвязанный» сервис? Это когда изменение одного сервиса не требует изменений в другом. Вы связаны посредством интерфейсов, у вас есть решение через DI и IoC — это сейчас стандартная практика, применять которую нужно обязательно. Обычно разработчики знают, почему :)
+Что такое «высокосогласованный» сервис? Это значит, что класс или компонент содержит все нужные методы решения поставленной задачи. Однако тут часто возникает вопрос, чем высокая согласованность (high cohesion) отличается от SRP? Допустим, у нас есть класс, отвечающий за управление кухней. В случае SRP такой класс работает только с кухней и больше ни с чем, но при этом он может содержать не все методы по управлению кухней. В случае же высокой согласованности, все методы по управлению кухней содержатся только в этом классе, и больше нигде. Это важное различие.
+
+
+REFACTORING
+
+Рефакторинг — это, в первую очередь, превращение грязного кода в чистый.
+Чистый код проходит все тесты
+Чистый код очевиден для других программистов
+Чистый код не содержит дублирования
+Чистый код содержит минимум классов и других движущихся частей
+Чистый код легче и дешевле поддерживать!
+
+Технический долг
+
+Причины появления технического долга:
+Давление со стороны бизнеса
+Отсутствие понимания последствий технического долга
+Отсутствие борьбы с жёсткой связанностью компонентов
+Отсутствие авто-тестов
+Отсутствие документации
+Отсутствие взаимодействия между членами команды
+Долговременная одновременная разработка в нескольких ветках
+Отложенный рефакторинг
+Отсутствие контроля за соблюдением стандартов
+Отсутствие компетенции
+
+Когда рефакторить
+
+Правило трёх:
+1) Делая что-то в первый раз, вы просто это делаете.
+2) Делая что-то аналогичное во второй раз, вы морщитесь от необходимости повторения, но все-таки повторяете то же самое.
+3) Делая что-то похожее в третий раз, вы начинаете рефакторинг.
+
+Когда делаете новую фичу
+Рефакторинг помогает понять чужой код. Если код, в который нужно добавить новую фичу, недостаточно ясный, рефакторинг позволяет сделать его очевидней для вас и для того, кто будет работать с ним в будущем.
+Рефакторинг облегчает написание нового кода. После рефакторинга добавление новой фичи происходит значительно более гладко и занимает меньше времени.
+
+Когда исправляете баги
+Ошибки — как тараканы, любят жить в темных затхлых местах вашего кода. Попробуйте навести порядок в коде и ошибки найдутся сами собой.
+Кроме того, вам не придется создавать специальные задачи для рефакторинга, которые так не любят видеть в отчетах менеджеры.
+
+Во время код-ревью
+Когда вы делаете ревью новой фичи, возможно это последний шанс почистить код перед тем, как он окажется доступным публично.
+Лучше всего проводить такое ревью вместе с автором кода. В этом случае, вы будете предлагать автору изменения, а потом вместе решать, насколько сложно произвести то или иное изменение. При этом, небольшие изменения можно будет осуществлять очень быстро.
+
+Как рефакторить
+Рефакторинг следует проводить серией небольших изменений, каждое из которых делает существующий код чуть лучше, оставляя программу в рабочем состоянии.
+
+Чек-лист правильно проведённого рефакторинга
+	
+Код должен стать чище.
+	Если после рефакторинга код остался таким же грязным... Что ж, сожалею, вы только что потратили зря час своей жизни. Но обязательно разберитесь почему это произошло.
+	Зачастую это случается тогда, когда вы отходите от рефакторинга мелкими изменениями и смешиваете кучу рефакторингов в одно большое изменение. Так очень легко потерять голову и наломать дров, особенно, если вы ограничены во времени.
+	Но такое случается и при работе с особенно запущенным кодом. Что бы вы ни улучшили, код в целом всё равно остаётся уродливым. В этом случае улучшить код можно лищь полностью переписав некоторые его части. Но помните, что перед этим у вас должны быть написаны тесты, а также запланирован изрядный кусок времени.
+В процессе рефакторинга не создаётся новая функциональность.
+Все существующие тесты должны успешно проходить.
+
+
+
+
+АНТИПАТТЕРНЫ
+Программирование копи-пастом (Copy and Paste Programming)
+«Брось, можно писать не только одну функцию!» или Спагетти-код (Spaghetti code)
+Золотой молоток (Golden hammer)
+«Что за 42?» или Магические числа (Magic numbers) Использование безымянных чисел или строковых констант вместо именованных констант в коде.
+«Что значит d:\proj\tests.dat?» или Жёсткое кодирование (Hard code)
+Мягкое кодирование (Soft code)
+Ненужная сложность (Accidental complexity)
+Лодочный якорь (Boat anchor)
+Изобретение велосипеда (Reinventing the wheel)
+Изобретение одноколёсного велосипеда (Reinventing the square wheel)
+«От твоего кода дурно пахнет» или Поток лавы (Lava flow)
+«А если i+1?» или Программирование перебором (Programming by permutation)
+«Как это вы передали строку вместо числа?!» или Слепая вера (Blind faith)
+Бездумное комментирование
+Божественный объект (God Object) Классы, контролирующие множество других классов, имеющие много зависимостей и много ответственности.
+
+Преждевременная оптимизация Оптимизация, проводимая до того, как у вас есть вся информация, необходимая для принятия взвешенных решений по поводу того, где и как нужно её проводить.
+Байкшеддинг - трата времени. Склонность тратить время на обсуждение тривиальных и субъективных вещей.
+Аналитический паралич Переизбыток анализа до такой степени, что прогресс и действия останавливаются.
+Страх перед добавлением классов Вера в то, что увеличение количества классов усложняет дизайн, приводит к страху перед добавлением новых классов или разбитием больших классов на мелкие.
+Эффект внутренней платформы Тенденция сложных программных систем изобретать заново возможности платформы, на которой они работают, или языка, на котором они написаны.
+Управление через количество Принятие решений на основании одних лишь чисел. Измерение прогресса программиста по количеству строк кода – то же самое, что измерение прогресса строительства самолёта по весу. (с) Билл Гейтс
+Бесполезные (полтергейстные) классы Бесполезные классы без зависимостей, используются для вызова методов другого класса или просто добавляют ненужный слой абстракции.
+
+Exception handling Этот антипаттерн представляет собой реализацию нормальной логики работы программы с помощью механизма исключений.
+Ненужная инициализация
+
+Рефакторинг - исправление антипаттернов.
+
+
+
+
+GRASP 
+
+ -(General Responsibility Assignment Software Patterns) — шаблоны проектирования, используемые для решения общих задач по назначению обязанностей классам и объектам.
+
+Информационный эксперт (Information Expert)
+	Шаблон информационный эксперт является базовым и в то же время самым очевидным из девяти. Информационный эксперт описывает основополагающие принципы назначения 
+		обязанностей классам и объектам. Согласно описанию, информационным экспертом (объектом наделенным некоторыми обязанностями) является объект, 
+		обладающий максимумом информацией, необходимой для выполнения назначенных обязанностей.
+	В качестве примера можно рассмотреть подсчет общего количества груза и его стоимости как на определенном рейсе, так и обобщенно для всех рейсов компании.
+	Применение шаблона информационный эксперт повышает связность модулей и не противоречит свойству инкапсуляции.
+Низкая связанность (Low Coupling) и Высокое зацепление (High Cohesion)
+	Примером хорошего дизайна системы может служить набор утилит GNU Binutils для Linux. В котором, каждая утилита (если ее рассматривать как модуль) 
+	выполняет лишь минимальные обязанности (высокое зацепление) и почти ничего не знает о природе других утилит (низкая связность), 
+	в связи с чем может быть легко заменена на аналог в некотором варианте использования.
+Устойчивый к изменениям (Protected Variantions)
+	Проблема модификации системы наиболее актуальна в условиях динамически изменяющихся требований. Зачастую, удается выделить т.н. точки неустойчивости системы, которые наиболее часто будут подвержены изменению/модификации. Тогда, сущность шаблона устойчивый к изменениям заключается в устранении точек неустойчивости, путем определения их в качестве интерфейсов и реализации для них различных вариантов поведения.
+	Например, рассмотрим ситуацию расширения спректра услуг компании «Навигатор+». Будем считать, что судоходная компания начала заниматься пассажирскими перевозками. Для этого, реализуем точку устойчивости системы — перевозимую сущность (Entity).
+Контроллер (Controller)
+	Контроллер отвечает за обработку входных системных событий, делегируя обязанности по их обработке компетентным классам. В общем случае, контроллер реализует один или несколько вариантов использования.
+	Известно понятие внешнего контроллера (Front Controller), который представляет всю систему в целом (агрегирует весь функционал системы в одном классе).
+	Примером контроллера является класс Administrator, реализующий вариант использования системы администратором из отдела комплектации рейсов.
+	Использование контроллеров позволяет отделить логику от представления, тем самым повышая возможность повторного использования кода.
+Полиморфизм (Polymorphism)
+	Шаблон полиморфизм позволяет обрабатывать альтернативные варианты поведения на основе типа. При этом, альтернативные реализации приводятся к обобщенному интерфейсу.
+	Рассмотрим интеграцию системы с внешними компонентами расчета тарифов на перевозку груза. Классы LocalTarificator и WorldWideTarificator являются адаптерами к соответствующим внешним компонентам.
+	Применение шаблона полиморфизм позволяет в будущем легко модифицировать систему.
+Чистая выдумка (Pure Fabrication)
+	Например, обязанности по сохранению информации о клиентах судоходной компании можно назначить выдуманному классу ClientsSaver. 
+	Применение шаблона чистая выдумка позволяет дизайну системы соответствовать принципам низкой связности и высокого зацепления.
+Перенаправление (Indirection)
+	Шаблон перенаправление реализует низкую связность между классами, путем назначения обязанностей по их взаимодействию дополнительному объекту — посреднику.
+	Примером данного шаблона может служить класс ClientsSaver (см. Чистая выдумка), который является промежуточным слоем между сущностями клиентов и хранилищем, в котором они будут сохранены. Кроме того, контроллер из триады MVC является посредником между данными их их представлением.
+
+Blog <>--- *Post <>--- *Comment
+
+Создатель (Creator) Шаблон creator говорит нам какие условия должны соблюстись, что бы объекты верно порождали друг друга. 
+	Для этого есть несколько правил:
+		объект А должен порождать объект Б, если:
+		объект А содержит или агрегирует объекты Б (содержит в себе как свойство или коллекцию)
+		объект А активно использует объекты Б (основной объем работы с объектом Б происходит посредством объекта А)
+		объект А обладает данными инициализации объекта Б (каждый раз при создании объекта Б, данные берутся из объекта А)
+		
+Итак, взглянув на диаграмму отношений, на основании шаблона Creator можно сделать вывод, что экземпляры класса Post должны создаваться внутри класса Blog, а Comment — в Post. 
+Почему так а не иначе? Например, почему Comment не должны создаваться в Blog? Ну хотя бы потому, что именно Post содержит в себе экземпляры Comment, 
+а так же Post обладает информацией для создания экземпляра Comment (в нашем случае это всего лишь указатель на родителя, но даже этим не обладает Blog по отношению к Comment).
+
+Информационный эксперт (Information Expert)
+	Информационный эксперт, как следует из названия, занимается не чем иным, как предоставлением информации об объекте. 
+	В нашем случае Information Expert должен отвечать на такие вопросы:
+	Кто должен знать кол-во комментариев к посту?
+	Кто должен знать общее кол-во комментариев в блоге?
+	Пытаясь ответить на эти вопросы, нам необходимо определить, кто из участников системы имеет необходимые сведения. Так getCommentsCount() стоит назначить объекту Post, 
+	а объект Blog, на основании промежуточных значений каждого из входящего в него объекта Post получит общую сумму комментариев getTotalComments().
+	Но при этом именно Post должен отвечать за такие аспекты, как «получить название поста» ( getTitle() ), «получить пост», «получить автора» и пр.
+Controller
+	Ну тут все просто. Это не что иное, как C из аббревиатуры MVC :) Этот шаблон отвечает за то, к кому именно должны обращаться вызовы из V (View), 
+	и кому C должен делегировать запросы на выполнение ( какая модель M должна их обработать )
+Low Coupling
+	Низкая связанность, отвечает за то, что бы объекты в системе знали друг о друге как можно меньше. Ведь чем меньше объект знает о других объектах, 
+	тем больше будет изолировано и тем меньше правок необходимо будет делать, если в системе что-то поменяется.
+	На наших диаграммах все хорошо. Blog ничего не знает о Comment, а степени связанности у каждого класса составляют всего лишь единицу. 
+	В более сложных системах связей бывает гораздо больше, и шаблон Low Coupling позволяет избежать следующих проблем:
+	При изменении в связанных классах, необходимо делать локальные изменения в данном классе
+	Понимание каждого класса в отдельности усложняется и требует изучения всех связанных классов
+	Повторное использование становится невозможным из-за того, что перетянув часть системы, необходимо тянуть почти всю систему.
+High Cohesion
+	Высокая степень зацепления — так переводится название шаблона. Это противовес предыдущего шаблона. Зацепление — процесс взаимодействия класса с другими классами 
+	системы и область ответственности за действия
+	но так ли хорошо, когда один класс отвечает и за измерение температуры за окном и за движение метро и за расчет pi до 87342 знака после запятой? 
+	Именно поэтому High Cohesion твердит, что класс должен стараться выполнять как можно меньше не специфичных для него задач, 
+	и иметь вполне определенную область применения. Только с опытом приходит понимание балансировки между этими двумя шаблонами.

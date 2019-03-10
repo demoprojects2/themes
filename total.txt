@@ -1,0 +1,1409 @@
+Process - исполнение программы.
+Thread (нить) - единица исполнения кода. В одном процессе может быть несколько потоков.
+Алгоритм - набор инструкций для выполнения некоторой задачи.
+Сложность алгоритма - функция зависимости объёма работы, которая выполняется некоторым алгоритмом, 
+		от размера входных данных
+	Формально O(f(n)) означает, что время работы алгоритма (или объём занимаемой памяти) 
+	растёт в зависимости от объёма входных данных не быстрее, чем некоторая константа, умноженная на f(n).
+	При входном потоке n время работы алгоритма растёт не быстрее, чем const * f(n).
+Collections.unmodified***
+immutable
+serializable, cloneable, threadsafe
+DISTINCT
+
+XSD - xml с типами данных
+XSLT = XML + XSL (styles). Преобразование XML-документов в другие типы документов
+
+GUAVA
+EHCACHE
+	
+Iterator exceptions:
+	next() 
+		NoSuchElementException - if the iteration has no more elements
+	remove ()
+		UnsupportedOperationException - if the remove operation is not supported by this iterator
+		java.lang.IllegalStateException - if the next method has not yet been called, or the remove method has already been called after the last call to the next method
+			Если вызвали метод remove() до вызова next()
+		java.util.ConcurrentModificationException - если удалять элемент не через единственный итератор.
+
+GRASP - шаблон ООП для решения общих задач по назначению ответственностей классам и объектам.
+Информационный эксперт
+	Ответственность ложится на того, кто владеет максимумом информации.
+Создатель
+	Объекты должен создавать тот, кто владеет максимум информации о них.
+Контроллер
+	Тот кто получает запросы и передаёт их исполнителю.
+Низкая связанность
+	Оъекты должны знать как можно меньше друг о друге
+Высокое зацепление
+	Объекты должны выполнять максимально специфические задачи
+Полиморфизм
+	Способность функций обрабатывать данные разных типов
+Чистая выдумка
+	Придумать класс, которого не существует в природе, но который поможет в коде.
+Посредник(Indirection)
+	Промежуточное звеною. Контроллер в MVC.
+Устойчивость к изменениям (Protected Variations)
+	Вынести необходимую логику в интерфейсы и предоставлять доступ лишь через интерфейсы.SOLID:
+	
+SOLID
+	The Single Responsibility Principle: класс делает только что-то одно, что отображает название класса.
+	The Open Closed Principle: классы закрыты для изменения, но открыты для расширения.
+	The Liskov Substitution Principle: объекты в программе должны быть заменяемыми на экземпляры их потомков без изменения правильности выполнения программы.
+	The Interface Segregation Principle: много интерфейсов, специально предназначенных для клиентов, лучше, чем один интерфейс общего назначения.
+	The Dependency Inversion Principle: зависимость на абстракциях, нет зависимости на что-то конкретное. Следует разрабатывать программное обеспечение таким образом, что различные модули были автономными, и соединялись друг с другом с помощью абстракции
+
+А ------> В     А создаёт В
+А ______> В     А имеет в себе и использует В
+А ______|>В     А наследует В
+А <>____> В		А содержит в себе множество В
+А ------|>В		А implements В
+	
+---------------------------------------------------
+OOP
+абстракция
+	interface 
+полиморфизм
+	interface входящий поток. Нам не важно из чего он был получен (файла, сети), мы работаем с интерфейсными методами.
+	Способность функций обрабатывать данные разных типов
+наследование
+инкапсуляция
+	сокрытие реализации	
+
+static nested class может обращаться к static обёртки. Внешний класс не имеет доступа ни к чему.
+member inner class может обращаться ко всему обёртки, не может иметь static внутри себя. Имеет доступ ко всему в высшем классе, высший класс не имеет прямого доступа ни к чему.
+local inner class может обращаться ко всему обёртки, может обращаться к final or effectively-final метода-родителя, не может иметь static внутри себя.
+an anonymous inner class is a local class without a name
+
+Referencies:
+Strong reference(A a = new A();) 
+	(A a = null;) and GC is launched
+WeakReference (WeakReference<A> w = new WeakReference<>(a);) 
+	GC is launched.
+Soft Reference (SoftReference<A> softref = new SoftReference<A>(a); ) 
+	out of memory and GC is launched
+PhantomReference<A> phantomRef = new PhantomReference<Gfg>(a,refQueue); 
+	will be removed instantly (will be put in ReferenceQueue actually)
+	Used only to know when an object is removed from memory
+
+IN INTERFACE:
+public static final int FIELD = 5;
+
+public abstract void a();
+public default void def() {}
+public static void stat() {}
+
+public static class A{}
+public static abstract class A{}
+public static abstract interface A {}
+	
+==================================================================================================================
+GIT-FLOW
+master - главная ветвь для релизов
+develop или dev - главная ветвь разработки
+feature/* - ветви с новыми функциями, которые потенциально будут слиты в dev
+hotfix/* - ветви хотфиксов master
+support/* - ветки поддержки
+
+initial:
+      A---B---C topic
+     /
+D---E---F---G master
+
+CHERRY-PICK:
+      A---B---C topic
+     /
+D---E---F---G master
+             \
+              A'--B'--C' topic_new
+			  
+REBASE:
+              A'--B'--C' topic
+             /
+D---E---F---G master
+
+================================================================================================================
+LOGGING
+
+Log4J, java.util.Logging - логгеры.
+Apache Commons Logging, Simple Logging Facade for Java (SLF4J) - прослойка (адаптер) между логингом и приложением.
+Logback - реализация интерфейсов SLF4J.
+
+logger
+	TRACE
+	DEBUG
+	INFO
+	WARN
+	ERROR
+	FATAL
+	OFF
+	Имя						Назначенный уровень	Эффективный уровень
+	root					INFO				INFO
+	ru						нет					INFO
+	ru.skipy				нет					INFO
+	ru.skipy.logger			DEBUG				DEBUG
+	ru.skipy.logger.test	нет					DEBUG
+appender
+	Консоль
+	Файлы (несколько различных типов)
+	JDBC
+	Темы (topics) JMS
+	NT Event Log
+	SMTP
+	Сокет
+	Syslog
+	Telnet
+	Любой java.io.Writer или java.io.OutputStream
+	
+	root			A1											A1						Родительских аппендеров нет, additivity значения не имеет
+	ru				A2,A3					true				A1,A2,A3				Аппендеры родительского (корневого) логгера плюс собственные
+	ru.skipy		-						true				A1,A2,A3				Все аппендеры родительского логгера (включая унаследованные), собственных нет
+	ru.skipy.logger	A4						true				A1,A2,A3,A4				Все аппендеры родительского логгера (включая унаследованные) плюс собственные
+	info			A5						false				A5						Только собственные аппендеры – родительские не наследуются
+	info.skipy		-						true				A5						Только родительские аппендеры – от ближайшего родителя, собственных нет
+
+	org.apache.log4j.FileAppender							добавляет данные в файл до бесконечности
+	org.apache.log4j.RollingFileAppender					позволяет ротировать файл по достижении определенного размера
+	org.apache.log4j.DailyRollingFileAppender				ротирует файл с определенной частотой
+															'.'yyyy-MM – файл ротируется раз в месяц
+															'.'yyyy-ww – файл ротируется раз в неделю
+															'.'yyyy-MM-dd – файл ротируется раз в день
+															'.'yyyy-MM-dd-a – файл ротируется раз в полдня
+															'.'yyyy-MM-dd-HH – файл ротируется раз в час
+															'.'yyyy-MM-dd-HH-mm – файл ротируется раз в минуту
+layout
+	org.apache.log4j.SimpleLayout
+	org.apache.log4j.HTMLLayout
+	org.apache.log4j.xml.XMLLayout
+	org.apache.log4j.TTCCLayout
+	org.apache.log4j.PatternLayout / org.apache.log4j.EnhancedPatternLayout
+	
+Профилирование — сбор характеристик работы программы, таких как время выполнения отдельных фрагментов (обычно подпрограмм), число кэш-промахов и т. д. 
+	Обычно выполняется совместно с оптимизацией программы.
+profiler - инструмент, используемый для анализа работы.
+
+================================================================================================================
+TESTING
+
+Unit Test
+Integration Testing
+System Testing
+Automation Testing
+	Автоматизированное тестирование программного обеспечения — часть процесса тестирования на этапе контроля качества в процессе разработки программного обеспечения. Оно использует программные средства для выполнения тестов и проверки результатов выполнения, что помогает сократить время тестирования и упростить его процесс.
+Perfomance Testing
+	In software quality assurance, performance testing is in general, a testing practice performed to determine how a system performs in terms of responsiveness and stability under a particular workload. It can also serve to investigate, measure, validate or verify other quality attributes of the system, such as scalability, reliability and resource usage.
+Security Testing
+	Тестирование безопасности - это процесс, предназначенный для выявления недостатков в механизмах безопасности информационной системы, которые защищают данные и поддерживают функциональность по назначению. Из-за логических ограничений тестирования безопасности, прохождение тестирования безопасности не является признаком того, что нет недостатков или что система адекватно удовлетворяет требованиям безопасности.
+	Типичные требования безопасности могут включать в себя конкретные элементы конфиденциальности, целостности, аутентификации, доступности, авторизации и отказа от авторства. [1] Фактические протестированные требования безопасности зависят от требований безопасности, установленных системой. Тестирование безопасности как термин имеет несколько различных значений и может быть выполнено несколькими различными способами. Таким образом, таксономия безопасности помогает нам понять эти различные подходы и значения, предоставляя базовый уровень для работы.
+TDD
+	Test Drivet Development. Сначала пишутся тесты, потом приложение.
+BDD
+	Behavior-driven development
+	TDD простым языком для бизнеса "я хочу то-то для того-то".
+	Как [роль того, чьи бизнес интересы удовлетворяются] я хочу, чтобы [описание функциональности так, как она должна работать], для того чтобы [описание выгоды].
+
+	
+================================================================================================================
+SERVLETS
+
+SERVLET LIFECYCLE
+загружается и создаётся контейнером сервлетов -> init() -> service() -> destroy()
+
+JSP LIFECYCLE
+client GET /hello.jsp -> JSP Container asks for hello.jsp then generate helloServlet.java 
+	-> it's compiled into helloServlet.class, executes and then page <html>hello</html> is returned to the client
+jspInit() -> _jspService() -> jspDestroy()
+
+Servlets are not thread safe
+
+Servlet Filters
+Servlet Interceptors
+Web Events and Listeners
+
+RequestDispatcher.forward(request, response)
+RequestDispatcher.include(request, response)
+HttpServletResponse.sendRedirect(url)
+
+Sharing data in the same application:
+Request
+Session
+ServletContext
+Cookie
+
+Sharing data in different applications:
+DB
+Shared Memory Objects (Resource Bean in Tomcat)
+ServletContext другого приложения
+Request to each other
+
+Tomcat = Catalina (Servlet container) + Coyote (web server) + Jasper (JSP Engine) + Cluster (Load balancer)
+server.xml - основной конфигурационный файл 
+Context.xml - конфигурация содержит настройки по умолчанию, которые могут быть использованы всеми контекстами Tomcat.
+
+================================================================================================================
+JMM
+
+System.gc() 
+Runtime.getRuntime().gc()
+protected void finalize() throws Throwable is called when GC works
+
+	  survivor space
+eden |  s0  |  s1   || tenured || permanent
+    young gen    	   old gen    permanent gen
+	
+Serial		1 поток, блокирует, укомплектовывает.
+Parallel	много потоков, блокирует, укомплектовывает.
+CMS			много потоков, старается не блокировать, не укомплековывает.	
+G1			много потоков, старается не блокировать, укомплектовывает.
+
+The pc register. Содержит адреса инструкций JVM. Разные указатели и мета-информация о потоке.
+Java Virtual Machine Stacks
+Native Method Stacks
+Heap
+Method Area. Структура классов, constant pool.
+Run-Time Constant Pool. Цифровые литералы, ссылки.
+
+JMC - это расширенный набор инструментов, который позволяет эффективно и детально анализировать обширные данные работы JVM. 
+JVisualVM - инструмент, позволяющий мониторить выполнение и прозводительность методов, снимать дампы, анализировать производительность, состояния потоков и памяти. 
+VisualGC - плагин для наблюдения распределения памяти по различным областям. 
+JConsol - инстумент, который предоставляет информацию о производительности и потреблении ресурсов приложений. 
+JMeter — инструмент для проведения нагрузочного тестирования
+
+================================================================================================================
+REFACTORING
+	превращение грязного кода в чистый.
+	исправление антипаттернов.
+	
+Чистый код проходит все тесты
+Чистый код очевиден для других программистов
+Чистый код не содержит дублирования
+Чистый код содержит минимум классов и других движущихся частей
+Чистый код легче и дешевле поддерживать!
+
+ТЕХНИЧЕСКИЙ ДОЛГ
+Причины появления технического долга:
+Давление со стороны бизнеса
+Отсутствие понимания последствий технического долга
+Отсутствие борьбы с жёсткой связанностью компонентов
+Отсутствие авто-тестов
+Отсутствие документации
+Отсутствие взаимодействия между членами команды
+Долговременная одновременная разработка в нескольких ветках
+Отложенный рефакторинг
+
+Код должен стать чище.
+В процессе рефакторинга не создаётся новая функциональность.
+Все существующие тесты должны успешно проходить.
+
+АНТИПАТТЕРНЫ
+Программирование копи-пастом (Copy and Paste Programming)
+«Брось, можно писать не только одну функцию!» или Спагетти-код (Spaghetti code)
+Золотой молоток (Golden hammer) применение одного решения (чаще всего какого-либо одного паттерна проектирования) для всех возможных и невозможных задач. 
+«Что за 42?» или Магические числа (Magic numbers) Использование безымянных чисел или строковых констант вместо именованных констант в коде.
+«Что значит d:\proj\tests.dat?» или Жёсткое кодирование (Hard code)
+Мягкое кодирование (Soft code)
+Ненужная сложность (Accidental complexity)
+Лодочный якорь (Boat anchor) сохранение неиспользуемых частей системы, которые остались после оптимизации или рефакторинга
+Изобретение велосипеда (Reinventing the wheel)
+Изобретение одноколёсного велосипеда (Reinventing the square wheel)
+«От твоего кода дурно пахнет» или Поток лавы (Lava flow) "// Не знаю, как оно работает, но оно работает. Не удалять и не менять!"
+«А если i+1?» или Программирование перебором (Programming by permutation)
+«Как это вы передали строку вместо числа?!» или Слепая вера (Blind faith)
+Бездумное комментирование
+Божественный объект (God Object) Классы, контролирующие множество других классов, имеющие много зависимостей и много ответственности.
+Преждевременная оптимизация Оптимизация, проводимая до того, как у вас есть вся информация, необходимая для принятия взвешенных решений по поводу того, где и как нужно её проводить.
+Байкшеддинг - трата времени. Склонность тратить время на обсуждение тривиальных и субъективных вещей.
+Аналитический паралич Переизбыток анализа до такой степени, что прогресс и действия останавливаются.
+Страх перед добавлением классов Вера в то, что увеличение количества классов усложняет дизайн, приводит к страху перед добавлением новых классов или разбитием больших классов на мелкие.
+Эффект внутренней платформы Тенденция сложных программных систем изобретать заново возможности платформы, на которой они работают, или языка, на котором они написаны.
+Управление через количество Принятие решений на основании одних лишь чисел. Измерение прогресса программиста по количеству строк кода – то же самое, что измерение прогресса строительства самолёта по весу. (с) Билл Гейтс
+Бесполезные (полтергейстные) классы Бесполезные классы без зависимостей, используются для вызова методов другого класса или просто добавляют ненужный слой абстракции.
+Exception handling Этот антипаттерн представляет собой реализацию нормальной логики работы программы с помощью механизма исключений.
+Ненужная инициализация
+
+================================================================================================================
+MICRO SERVICE
+
+маленькие (small) разрабатывается одной командой
+сфокусированные (focused) решает одну задачу
+слабосвязанные (loosely coupled) не зависит от других сервисов
+высокосогласованные (highly cohesive) содержит все нужные методы решения поставленной задачи
+
+MicroService
++	если одна часть вышла из строя, система всё равно продолжает работать.
++	проще разобраться в коде, расширять систему и заменять сервисы другими, когда всё разделено на мелкие кусочки.
+-	сложность деплоймента, мониторинга и тестирования
+-	но добавляют сложности, поэтому для маленьких систем лучше использовать monolithic
+-	сложнее мониторить систему в целом
+Monolithic
++	легко поделиться одним .war
++	упрощено тестирование
++	проще деплоить
+-	система проще может упасть полностью.
+-	сложнее разобраться в коде, когда все в одном месте.
+-	если нужно расширить систему, это часто будет означать расширить всё в системе.
+-	ре-деплой одной части ведёт за собой деплой всей системы
+
+================================================================================================================
+SQL (Structured Query Language) - декларативный язык программирования, применяемый для создания, модификации и управления данными 
+	в реляционной базе данных, управляемой соответствующей системой управления базами данных
+DDL - definition
+		CREATE 	// CREATE DATABASE name;
+		ALTER 	// редактирование данных: ALTER TABLE имя_таблицы DROP COLUMN имя_колонки;
+		DROP	// DROP SCHEMA(DATABASE) IF EXISTS schema;
+DML - manipulation
+	INSERT	//INSERT INTO table (name, age) VALUES ('a', 1), ('b', 2);
+	UPDATE	//UPDATE table SET name = 'c' WHERE id = 3;
+	DELETE	//DELETE FROM TABLE table WHERE id=1;
+	MERGE
+DQL - query
+	SELECT	//SELECT * FROM table;
+DCL - control
+	GRANT
+	DENY
+	REVOKE
+TCL - transaction
+	COMMIT
+	ROLLBACK
+	SAVEPOINT
+	SET
+	
+	DISTINCT, SERIALIZABLE
+	
+/** JOIN TABLES */
+SELECT col1, col2 FROM table1, table2 WHERE table1.col1 = table2.col2
+INNER JOIN (AND), LEFT OUTER JOIN (LEFT), RIGHT OUTER JOIN (RIGHT), CROSS JOIN (OR, each with each), FULL JOIN (LEFT OUTER JOIN + RIGHT OUTER JOIN), SELF JOIN (используется для объединения таблицы с ней самой)
+
+/** JOIN REQUESTS */
+UNION (OR) INTERSECT (AND), EXCEPT(LEFT NOT RIGHT)
+	
+Преимущества SQL:
+	Позволяет пользователям определять данные в БД и манипулировать ими.
+	Позволяет пользователю создавать встроенные виды, процедуры и функции, триггеры, индексы, временные таблицы, курсоры в БД.
+	
+INTEGRITY (целостность, честность)
+	Entity - В таблице нет повторяющихся данных.
+	Domain - Использует валидные вводы для указанной колонки путём ограничения типа, формата или диапазона значений.  Constraints? Type and check?
+	Referential - Записи, которые используются другими записями, не могут быть удалены.
+	Определённая пользователем - Использует некоторые специфические правила, которые не укладываются в три, указанные выше категории.
+
+Нормальная форма — требование к структуре таблиц, чтобы не было излишней зависимости между аттрибутами(полями).
+
+Денормализация (англ. denormalization) — приведение базы данных к ненормальной форме 
+										с целью ускорения операций чтения из базы за счет добавления избыточных данных.
+
+Типы бд:
+	1. hierarchical database system --- single parent hierarchy
+	2. network database system --- multiparent hierarchy ---> связи (links) + отношения (relationships)
+	3. Relational database system
+-----------------------------------------------------------------------------------
+ТИПЫ ДАННЫХ:
+
+целочисленные
+	BIGINT from -2^63 to 2^63-1
+	INT from -2^31 to 2^31-1
+	SMALLINT from -2^15 to 2^15-1
+	TINYINT from 0 to 2^8-1
+	BIT from 0 to 1
+	DECIMAL from -10^38 + 1 to 10^38 - 1
+	NUMERIC from -10^38 + 1 to 10^38 - 1
+	MONEY -(2^63 * 10^-4) to (2^63 - 1) * 10^-4
+	SMALLMONEY -(2^31 * 10^-4) to (2^31 - 1) * 10^-4
+числа с плавающией точкой
+	FLOAT from -1.79E + 308	to 1.79E + 308
+	REAL from -3.40E + 38 to 3.40E + 38
+время и дата
+	DATETIME from 1 Января, 1753 to 31 Декабря , 9999
+	SMALLDATETIME from 1 Января, 1900 to 6 Июня, 2079
+	DATE формат May 30, 2016
+	TIME формат 15:30 P.M
+символы
+	CHAR Максимальная длина – 8,000 символов. (Фиксированная длина символов, которые не входят в Unicode)
+	VARCHAR Максимальная длина – 8,000 символов. (Изменяющаяся длина данных, не входящих в Unicode).
+	VARCHAR(max) Максимальная длина – 231characters, Изменяющаяся длина данных, не входящих в Unicode (только для SQL Server 2005).
+	TEXT макс длина 2^31 - 1 Изменяющаяся длина данных, не входящих в Unicode
+символы Unicode
+	NCHAR Максимальная длина – 4,000 символов.(Фиксированная длина Unicode )
+	NVARCHAR 	Максимальная длина – 4,000 символов.(Изменяющаяся длина Unicode )
+	NVARCHAR(max) Максимальная длина – 231 символ. (Изменяющаяся длина Unicode, только для SQL Server 2005 )
+	NTEXT 	Максимальная длина 2^31 / 2 - 1 символов. (Изменяющаяся длина Unicode )
+бинарные
+	BINARY Максимальная длина – 8,000 байтов.(Фиксированная длина бинарных данных )
+	VARBINARY 	Максимальная длина – 8,000 байтов.(Изменяющаяся длина бинарных данных )
+	VARBINARY(max) 	Максимальная длина – 231 байт.(Фиксированная длина бинарных данных. Только для SQL Server 2005)
+	IMAGE Максимальная длина – 2^31 - 1 байтов. (Изменяющаяся длина бинарных данных )
+другие
+	sql_variant Хранит значения различных типов данных, поддерживаемых сервером SQL, за исключением, text, ntext и timestamp.
+	TIMESTAMP Хранит уникальное для базы данных значение, которое обновляется при каждом изменении записи.
+	uniqueidentifier Хранит глобальный уникальный идентификатор (GUID)
+	xml Хранит XML данные. Мы можем хранить экземпляр xml в колонке, либо в переменной ( Только для SQL Server 2005).
+	cursor Хранит ссылку на курсор.
+	table Хранит результирующее множество для крайней обработки.
+	gender ENUM('M','F')
+	
+--------------------------------------------------------------------------------------------------------------
+ТРАНЗАКЦИИ
+
+Atomicity (транзакция фиксируется либо целиком, либо никак)
+Consistency БД после выполнения операции должна быть в согласованном состоятии.
+	Атомарность нескольких транзакций.
+	Это означает, что любая завершённая транзакция (транзакция, которая достигла завершения транзакции – end of transaction) фиксирует только допустимые результаты. Например, при переводе денег с одного счёта на другой, в случае, если деньги ушли с одного счёта, они должны прийти на другой (это и есть согласованность системы). Списание и зачисление  – это две разные транзакции, поэтому первая транзакция пройдёт без ошибок, а второй просто не будет. Именно поэтому крайне важно учитывать это свойство и поддерживать баланс системы.
+	Согласованность любые изменения должны быть согласованы со всеми ограничениями на уровне БД и таблиц
+Isolation несколько видов изоляции транзакции от других.
+Durability Если при выполнении транзакции произойдёт разрыв связи, 
+	то при восстановлении этой связи эта транзакция будет корректно обработана каким-либо образом (чтение оборванное операции ведётся из лога на сервере).
+	Эта концепция гарантирует, что если мы получили подтверждение о выполнении транзакции, то изменения, вызванные этой транзакцией не должны быть отменены из-за сбоя системы (например, отключение электропитания).
+	(Атомарность транзакции и внешних факторов?)
+	Долговечность	при подтверждении тр-ции, изменения, вызванные этой тр-цией не должны быть отменены из-за сбоя системы
+	
+Проблемы при параллельных обращениях:
+- Lost update Два потока A и B обращаются к переменной С, читают её значение, дописывают CA' и CB' (CA' раньше CB'), коммитятся. Результат CB'. Должен быть CA'B'
+	(две сессии читают одну и ту же переменную, изменяют её, коммитят. Результом будет более поздний коммит)
+- Dirty read Два потока A и B обращаются к переменной С, А читает С и дописывает CA', B читает СA', A rollback, B дописывает CA'B' и commit. Результат CA'B'. Должен быть CB'
+	Поток может увидеть незакомиченное изменённое значение другим потоком.
+	(Одна сессия прочитала значение, которое чуть позже было rollbacked другой)
+- Non-repeatable read Поток А и B читают С, А дописывает СA', А commit, B читает CA' 
+	B при первом и втором чтении получает разные результаты (видит обновлённую запись).
+	(С изменённым полем)
+- Phantom read Поток А и B читают С, А дописывает новое поле С + A', А commit, B читает C + A'
+	B при первом и втором чтении получает разные результаты (видит новую запись).
+	(С добавленным полем)
+
+Isolation levels (+ проблема решена, - не решена):
+				Phantom read	Non-Repeatable read		Dirty read		Lost update
+				
+Serializable		+					+					+				+
+
+Repeatable read		-					+					+				+			~ == Serializable in MySQL
+
+Read commited		-					-					+				+
+(default)
+
+Read uncommited		-					-					-				+
+
+==============================================================================================================================
+JDBC:
+	Class.forName(DRIVER);
+	try (Connection con = DriverManager.getConnection(...);
+	Statement st = con.statement();
+	ResultSet rs = st.executeQuery(SQL))
+	id i = st.executeUpdate(SQL);
+	while (rs.next)
+		rs.getString(1); //or rs.getString(name);
+	PreparedStatement, CallableStatement;
+	
+===============================================================================================================
+HIBERNATE
+
+INITIALIZATION:
+	hibernate.properties and hibernate.cfg.xml
+	SessionFactory (ThreadSafe). 1 SessionFactory  = 1 DataBase
+	Session (Not threadSafe)
+	Transaction
+	
+1) transient(new) - the object is new and it's nowhere.
+2) persistent - the object is linked with persistent context and database.
+3) detached - the object is detached from persisten and database.
+
+НАСЛЕДОВАНИЕ.
+	1) @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+		В одной таблице и общие поля и каждое специфическое поле.
+	2) @Inheritance(strategy = InheritanceType.JOINED)
+		Одна аблица с общими полями и две таблицы только со специфичными полями.
+	3) @InheritanceType.TABLE_PER_CLASS
+		Две разные таблицы, в каждой из которых и общие поля, и специфические.
+		
+КОМПОЗИЦИЯ.
+
+@Embadable
+A field;
+
+@Embadded
+public class A
+
+CRITERIA
+	Restrictions. eq; lt; le; gt; ge
+	Criteria criteria = session.createCriteria(someClass.class)
+                     .add(Restrictions.eq("value", 400);
+					 
+CACHE CONCURRENCY STRATEGY:
+	translactional — как будто последовательно одна транзакция за другой. Плата за это — блокировки и потеря производительности.
+	read-write — если требуется обновлять данные.
+	nonstrict-read-write — если редко требуется обновлять данные.
+	read-only — объекты кэшируются только для чтения и изменение удаляет их из кэша.
+
+КЭШИ:
+	1) На уровне сессии. Нельзя отключить.
+	2) На уровне фабрики сессий. Задаётся вручную.
+	3) Запросы. на уровне фабрики сессий. Задаётся вручную. Всегда read only.
+	
+REGION - имя кэша второго уровня.
+
+===============================================================================================================
+JPA
+
+INITIALIZATION:
+	persistence.xml
+	EntityManagerFactory
+	EntityManager
+	getTransaction().begin() and getTransaction().commit();
+	
+1) new
+2) managed <- persist(). refresh() перечитывает данные из бд в объект.
+3) deleted <- remove()
+4) detached
+	Происходит в таких ситуациях:
+	Сериализации/десериализации сущности, передаче из jvm в jvm и т.д.
+	Окончании транзакции
+	Закрытии EntityManager методом close() или просто сборщиком мусора.
+	Сброса persistence context EntityManager  методом clear().
+5) persisted
+	В этом состоянии сущность существует только в базе данных, а в программе её нет. Перевести сущность в состояние управляемой, то есть попросту загрузить её из базы данных, 
+	можно методами EntityManager  find()  или семейством методов  createQuery()
+merge()
+	применённый на отсоединённой сущности, либо копирует значение переданной сущности в уже существующую сущность с тем же значением поля @id, 
+	либо создаёт новую сущность этого типа и копирует данные в неё. В обоих случаях результат сохраняется в базу и из метода возвращается новая управляемая сущность. 
+	Старая при этом остаётся отсоединённой.
+	merge() можно использовать и с новыми сущностями. В отличие от persist() он создаст ещё одну сущность того же типа, скопирует все данные в неё и сделает её управляемой. persist() же, как написано выше, копий не делает и переводит в управляемые то, что ему передали.
+	
+===============================================================================================================
+SOAP - simple object access protocol. Протокол для обмена xml сообщениями. Изначально был создан для вызова удалённых процедур.
+		actually perform actions like doDelete(), doSubtract(), doAdd()
+
+WSDL - web service difinition language. Помогает клиентам разобраться в запросах сервера.
+	 - an XML document that describes a web service.
+	 tells about the functions that you can implement or exposed to the client. For example: add, delete, subtract and so on.
+
+In a normal day to day life example:
+	WSDL: When we go to a restaurant we see the Menu Items, those are the WSDL's.
+	Proxy Classes: Now after seeing the Menu Items we make up our Mind (Process our mind on what to order): So, basically we make Proxy classes based on WSDL Document.
+	SOAP: Then when we actually order the food based on the Menu's: Meaning we use proxy classes to call upon the service methods which is done using SOAP. :)	 
+	 
+JAX-WS Java API for XML based Web Services
+Apache CXF - implementation
+Использование аннотаций. Декларация end-points происходит в классах.
+Интеграция с JAX-B
+Выбор между сверху-внизу(java генерирует классы по wsdl) и снизу-вверх (программист создаёт end-point классы)
+
+REST											SOAP
+JAX-RS											JAX-WS
+JSON XML PLAIN_TEXT								XML
+HTTP											HTTP JMS SMTP
+RESTEASY, JERSEY								APACHE CXF
+RESOURCE										ACTION
+UNSECURED										SECURED		
+URIs											SERVICE INTERFACES
+CAN BE CACHED									CAN NOT BE CACHED
+
+================================================================================================================
+PATTERNS
+
+CREATIONAL
+	SINGLETON			гарантирует, что у класса есть только один экземпляр
+	FACTORY METHOD  	Имеет один метод произдводства
+	ABSTRACT FACTORY 	позволяет создавать семейства связанных объектов. Имеет несколько методов произдводства
+	BUILDER				позволяет создавать сложные объекты пошагово.
+STRUCTURAL
+	DECORATOR			оборачивает объекты в обочку с дополнительной функциональностью.
+	ADAPTER				позволяет объектам с несовместимыми интерфейсами работать вместе
+	FACADE				предоставляет простой интерфейс к сложной системе классов. Сотрудник службы поддержки
+BEHAVIORAL
+	STRATEGY			определяет семейство схожих алгоритмов и помещает каждый из них в собственный класс, 
+						после чего алгоритмы можно взаимозаменять прямо во время исполнения программы
+	OBSERVER			создаёт механизм подписки, позволяющий одним объектам следить и реагировать на события, происходящие в других объектах
+	DELEGATE			Делегирует выполнение методов другим классам
+	COMMAND				объект, который используется, чтобы инкапсулировать всю информацию, необходимую для исполнения действия.
+						посредник между заказчиком и исполнителем.
+						Один имеет какие-то методы, другой является кнопкой на эти методы, третий нажимает на эту кнопку
+						
+==================================================================================================================
+ANT, MAVEN, GRADLE
+
+ANT - утилита для автоматизации процесса сборки ПО. Императивный подход (КАК!).
+	Build file - build.xml
+	Build, Compile, Deploy
+	Недостатки:
+		- сложно работать с зависимостями
+		- громоздкий xml
+		- не поддерживает работу с многомодульными проектами (не учитывает разбиение на модули)
+		
+MAVEN - система автоматизация сборки и  управления пакетами.
+	Build file - pom.xml
+	обеспечивает декларативную сборку проекта
+	использует принцип Maven-архетипов
+		testproject1
+			|-- pom.xml
+			`-- src
+				|-- main
+				|   `-- java
+				|       `--ru
+				|           `-- apache_maven
+				|                   `-- App.java
+				`-- test
+					`-- java
+						`-- ru
+							`-- apache_maven
+									`-- AppTest.java
+	Репозитории. Локальный и Maven Central Repository
+	Необходимые библиотеки подгружаются в проект автоматически.
+	Преимущества:
+		1 Независимость от os
+		2 Управление зависимостями
+		3 Возможна сборка из командной строки
+		4 Хорошая интеграция со средами разработки
+	Структура:
+		<modelVersion>4.0.0</modelVersion>
+		<groupId>com.vfreiman</groupId>
+		<artifactId>lessons</artifactId>
+		<version>1.0</version>
+		<packaging>jar</packaging>
+		<properties></properties>
+		<dependencies></dependencies>
+		<build>
+			<plugins></plugins>
+		</build>
+		<profiles></profiles>
+	Встроенные жизненные циклы:
+		Default обрабатывает развертывание вашего проекта
+		Clean обрабатывает очистку проекта
+		Site - это создание документации сайта вашего проекта
+	Основные фазы сборки проекта (можно выполнить фазу используя команду mvn)
+		1. Validate - проверить проект
+		2. compile - Компилирование проекта
+		3. test - Тестирование с помощью JUnit тестов
+		4. package - Создание .jar файла или war, ear в зависимости от типа проекта
+		5. verify - Запуск интеграционных тестов
+		6. install - Копирование .jar (war , ear) в локальный репозиторий
+		7. deploy - публикация файла в удалённый репозиторий
+		
+GRADLE - система автоматической сборки, построенная на принципах Apache Ant и Apache Maven, но предоставляющая DSL(Domain Specific Language) на языке Groovy
+	Build file - gradle.build - программа на Groovy.
+	Task - основной компонент процесса сборки, именованные наборы инструкций билда, которые Gradle запускает выполняя сборку приложения.
+	
+	3 фазы жизненного цикла:
+		Инициализация — фаза, в которой Gradle принимает решение, какие объекты будут принимать участие в билде. Последняя фаза важна в многопроектных билдах.
+		Конфигурация — фаза в которой объекты задачи собираются во внутреннюю объектную модель, обычно называемую направленным ациклическим графом.
+		Выполнение — фаза, во время которой задачи билда выполняются в порядке, указанном в настройках их зависимостей.
+		
+	Несколько команд:
+	gradle -v	- проверим версию
+	gradle tasks	- отображает задачи, которые доступны в текущей директории
+	
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+	
+	dependencies {
+		compile "joda-time:joda-time:2.2"		// compile - это конфигурация
+	}
+	
+	apply plugin: 'application'
+	mainClassName = 'hello.HelloWorld'
+	
+	compile fileTree(dir: 'libs', include: ['*.jar']) //добавить зависимости в jar
+		
+===================================================================================================================================
+CI (CONTITINOUS INTERGRATION)
+	- это автоматическая сборка проекта из исходного кода
+	
+	-при этом дополнительно возможен запуск автоматических тестов
+	(см. maven-surefire-plugin, maven-failsafe-plugin )
+	-проверка качества кода
+	(см. maven-pmd-plugin, maven-checkstyle-plugin findbugs-maven-plugin ),
+	-развёртывание приложения на тестовом сервере (для серверных приложений).
+
+Плюсы непрерывной интеграции:
+	раннее обнаружение ошибок
+	автоматизация рутинных операций
+	как результат - экономия времени и повышение качества кода.
+
+Организовать процесс автоматической сборки можно используя:
+	Jenkins/Hudson
+	Continuum
+	CruiseControl
+	Teamcity
+
+======================================================================================
+JMS
+
+	producer of messages
+	destination: queue or topic
+	consumer of messages
+	
+Message:
+	header
+		Заголовок хранит мета-информацию сообщения, заполняемую автоматически
+		This section is mandatory.
+			•JMSDestination – determine a destination store messages
+			•JMSDeliveryMode – determine a mode delivered message to consumers
+			•JMSMessageID – unique identifier of Message
+			•JMSTimestamp – sending time of Message
+			•JMSCorrelationID – identifier message correlate with current message
+			•JMSReplyTo – responding mode
+			•JMSRedelivered – determine message delivered over once times
+			•JMSType – message type
+			•JMSExpiration – lifecycle of message on destination
+			•JMSPriority – priority of message in deliver process
+	properties
+		Поле свойств схоже с заголовком, но оно заполняется программно, и позже
+		получатель сможет прочитать эту информацию.
+	data
+	
+Message Types:
+	•TextMessage – It is represented by javax,jms.TextMessage. It is
+	used to represent a block of text, that is a String in Java.
+	•ObjectMessage – It is represented by
+	javax.jms.ObjectMessage. It is used to represent a Java object,
+	which must be Serializiable.
+	•BytesMessage – It is represented by javax.jms.BytesMessage.
+	It is used to represent a block of binary data that is a byte array in
+	Java.
+	•StreamMessage – It is represented by
+	javax.jms.StreamMessage. It is used to represent a list of Java
+	primitive values.
+	•MapMessage – It is represented by javax.jms.MapMessage. It is
+	used to represent a set of key/value pairs.
+	•Message – no body represents, used for event notification
+	
+Point-to-Point (1 - 1)
+	one message to one consumer through queue
+	сообщение удаляется из очереди, только когда она доставлено
+	
+Publish-and-Subcribe (1 - *)
+	one message to all consumers at the time through topic
+	
+MDB (Message-Driven Bean) обрабатывает асинхронные сообщения JMS.
+	Stateless, server-side, transaction-aware
+	Transactions, security, resources, concurrency
+	отвечает только на асинхронные сообщения, а не на прямой вызов клиента.
+
+======================================================================================
+java.util.concurrent можно формально поделить на неколько частей.
+1) Pools ExecutorServices.
+	i Executor => i ExecutorService => a AbstractExecutorService => ThreadPoolExecutor or Executors.newFixedThreadPool or Executors.newCachedThreadPool
+	i Executor => i ExecutorService => i ScheduledExecutorService + ThreadPoolExecutor => ScheduledThreadPoolExecutor or Executors.newScheduledThreadPool
+	i Executor => i ExecutorService => a AbstractExecutorService => ForkJoinPool or Executors.newWorkStealingPool
+2) Locks.
+	ReentrantLock or ReentrantReadWriteLock. Condition
+3) Synchronizers. 
+	Semaphore, CountDownLatch, CyclingBarrier, Phaser, Exchager, LocalThreadRandom
+4) Atomics.
+5) Collections. 
+	Collections.synchronizedCollection, 
+	CopyOnWriteArrayList,  CopyOnWriteArraySet, 
+	ConcurrentSkipListSet, ConcurrentSkipListMap, 
+	ConcurrentHashMap, 
+	ConcurrentLinkedQueue, ConcurrentLinkedDeque, LinkedBlockinQueue, LinkedBlockingDeque, ArrayBlockingQueue, 
+		PriorityBlockingQueue, DelayQueue, SynchronousQueue. 
+
+Thread states:
+	Thread.State newState = Thread.State.NEW;
+	Thread.State runnableState = Thread.State.RUNNABLE;
+	Thread.State terminatedState = Thread.State.TERMINATED;
+	Thread.State blockedState = Thread.State.BLOCKED; //waiting for a monitor, lock.lock(), semaphore.acquire().
+	Thread.State waitingState = Thread.State.WAITING; //Object.wait with no timeout, Thread.join with no timeout, LockSupport.park, wait(), join(), condition.awaits()
+	Thread.State timedWaitingState = Thread.State.TIMED_WAITING; //Thread.sleep, Object.wait with timeout, Thread.join with timeout
+
+Multithreading problems:
+	Deadlock. All threads are blocked, the program hangs forever.
+	Livelock No threads blocked but they run into infinite loops. The program is still running but unable to make further progress.
+	Starvation. Only one thread is running, and other threads are waiting forever.
+	Race Conditions
+
+i Runnable + i Future => i RunnableFuture => FutureTask
+i Future + i CompletionStage => CompletableFuture
+i CompletionService => ExecutorCompletionService
+
+======================================================================================
+SPRING
+
+1) POJO;
+2) слабое связывание, DI, interfaces;
+3) AOP;
+4) TEMPLATES.
+
+Связывание (wiring) - процесс создания связей между компонентами.
+	
+CONTAINERS:
+	Bean factories;
+	Application contexts;
+
+APPLICACTION CONTEXTS:
+	ClassPathXmlApplicationContext
+	AnnotationConfigApplicationContext
+	WebApplicationContext extends ApplicationContext;
+	FileSystemXmlApplicationContext;
+	XmlWebApplicationContext;
+	GenericGroovyApplicationContext.
+	
+AOP
+	<aop:pointcut id="embark"
+				expression="execution(* *.embarkOnQuest(..))" />
+	ADVICE: before, after
+	
+<context:annotation-config>											/** ищет аннотации, чтобы связывать бины */
+<context:component-scan>
+
+4 KINDS OF AUTOWIRING:
+	 byName
+		Если совпадают имя бина и имя класса.
+	 byType
+	 constructor
+	 autodetect: constructor => byType
+	
+Сначала @Autowiring идёт по имени. Например, 
+@Autowiring
+A a;
+Будет искать Component("a");
+
+Если не найдёт, то будет искать бины, которые принадлежат классу A.
+Если найдёт несколько, то нужны @Qualifier.
+@Autowiring
+@Qualifier("somename")
+A a;
+
+И @Qualifier("somename") на @Component класса A.
+
+Autowire a primitive value with the @Value("some value") annotation.
+
+SPRING TEMPLATES
+	HibernateTemplate
+	JdbcTemplate
+	SimpleJdbcTemplate
+	RestTemplate
+	JmsTemplate	Class
+	JndiTemplate
+	TransactionTemplate
+	UriTemplate
+	
+LIFECYCLE
+1 Spring instantiates the bean.
+2 Spring injects values and bean references into the bean’s properties.
+3 If the bean implements BeanNameAware, Spring passes the bean’s ID to the setBeanName() method.
+4 If the bean implements BeanFactoryAware, Spring calls the setBeanFactory()
+method, passing in the bean factory itself
+5 If the bean implements ApplicationContextAware, Spring will call the setApplicationContext() method, passing in a reference to the enclosing application context.
+6 If any of the beans implement the BeanPostProcessor interface, Spring calls
+their postProcessBeforeInitialization() method.
+7 If any beans implement the InitializingBean interface, Spring calls their
+afterPropertiesSet() method. Similarly, if the bean was declared with an
+init-method, then the specified initialization method will be called.
+8 If there are any beans that implement BeanPostProcessor, Spring will call their
+postProcessAfterInitialization() method.
+9 At this point, the bean is ready to be used by the application and will remain in
+the application context until the application context is destroyed.
+10 If any beans implement the DisposableBean interface, then Spring will call
+their destroy() methods. Likewise, if any bean was declared with a destroymethod, then the specified method will be called.
+
+10 namespaces of xml_configuration: aop, beans, context, jee, jms, lang, mvc, oxm, tx, util
+
+SCOPES
+	singleton
+	prototype
+	request
+	session
+	global-session (only works with a portlet context)
+	application (servletContext)
+	websocket
+	thread (Every request for a bean will return the same instance within the same thread)
+	
+3 phased constructor
+Constructor java
+@PostConstruct BPP
+ApplicationListener ContextListener Из любого ивента может вытащить контекст.
+	ContextStartedEvent
+	ContextStoppedEvent
+	ContextRefreshedEvent +
+	ContextClosedEvent
+	
+BeanFactoryPostProcessor (BFPP) позволяет настраивать бин дефинишены до того как создаются бины.
+	Может повлиять на Factory и на BeanDefinitions, из которых фабрика будет создавать бины.
+
+BeanDefinitionReader читает xml, достаёт оттуда информацию и кладёт её в BeanDefinition(map)
+ClassPathBeanDefinitionScanner (ResourceLoaderEvent) ищет классы с аннотацией @Component и создаёт дополнительные BeanDefinitions из них
+BFPP переделывает BeanDefinitions как захочет
+BeanFactory создаёт объекты из BeanDefinition и отдаёт их BeanPostProcessor before.
+BPP before что-то делает с ними и отдаёт BF.
+BeanFactory вызывает настраивает бины из BD, вызывает @PostConstruct, отдаёт BPP after.
+BPP after выполняет дополнительную логику в объектах при помощи прокси и возвращает его BF.
+BF отдаёт новосозданный объект IoC containerУ (hashMap). Beanы готовы.
+
+AnnotatedBeanDefinitionReader внутри AnnotationConfigApplicationContext, регистрирует все java конфиги, парсит java-based конфиги.
+ConfigurationClassPostProcessor (особый BeanFactoryPostProcessor, который не изменяет а добавляет BeanDefinitions из java конфигов) 
+	обрабатывает java configs. Его регистрирует AnnotationConfigApplicationContext.
+	Он создаёт BeanDefinitions по @Bean
+	Он также относится к
+		@Import можно импортировать другую java конфигурацию
+		@ImportResource можно импортировать xml конфигурацию
+		@ComponentScan
+	
+MVC
+				d i s p a t c h e r    s e r v l e t
+handler mapping		controller		view resolver		view
+
+SECURITY
+
+UserDetailsService создаёт UserDetails через username
+UserDetails создаёт принципала Authentication, который хранится в SecurityContext, который можно получить из SecurityContextHolder
+GrantedAuthority отражает разрешения выданные доверителю в масштабе всего приложения
+
+application.properties:
+logging.level.org.springframework.security: INFO
+
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .authorizeRequests()
+                    .antMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
+                    .antMatchers("/**").permitAll()
+                    .anyRequest().authenticated()
+                    .and()
+                .formLogin()
+                    .loginPage("/login")
+                    .failureUrl("/login?error")
+                    .permitAll()
+                    .and()
+                .logout()
+                    .permitAll();
+					
+new UserDetails() {
+		@Override
+		public Collection<? extends GrantedAuthority> getAuthorities() {
+			Collection<GrantedAuthority> col = new HashSet<>();
+			col.add(() -> "ROLE_USER");
+			return col;
+		}
+
+		@Override
+		public String getPassword() {
+			return String.format("{%s}%s", "bcrypt", new BCryptPasswordEncoder().encode(password));
+		}
+
+		@Override
+		public String getUsername() {
+			return username;
+		}
+
+======================================================================================
+STREAM API
+
+In Java8 Streams, performance is achieved by parallelism, laziness, and using short-circuit operations, 
+	but there is a downside as well, and we need to be very cautious while choosing Streams, 
+	as it may degrade the performance of your application.
+
+Laziness - intermediate operations will not executed until a terminal operation is called.
+
+Short-Circuit Behavior - Short-circuiting will terminate the processing once condition met. 
+	anyMatch, allMatch, findFirst, findAny, limit, etc.
+Stateful Intermediate Operations: distinct(), sort(), limit(), etc. Могут замедлять производительность приложения.
+Stateless Intermediate Operations: filter(), map(), etc.
+
+======================================================================================
+OTHERS
+
+Ответственные
+A система ТР
+	если 100 рублей ушли со счёта, они должны прийти на другой счёт, чтобы транзакция подтвердилась
+C прикладной программист
+I 
+	Выполнение является сериализуемым (то есть изолированным), если его эффект такой же, как и последовательное выполнение транзакций, одна за другой, последовательно, без перекрытия при выполнении любых двух из них. 
+	каждая из двух транзакций пытается вывести последние 100 долларов на счет. Если обе транзакции считывают баланс счета до того, как какая-либо из них обновит его, то обе транзакции определят, что денег достаточно для удовлетворения их запросов, и обе из них заберут последние 100 долларов.
+	Именно сочетание согласованности транзакций и изоляции гарантирует, что выполнение наборов транзакций сохраняет согласованность базы данных
+D
+----------------------------------------------------------------------------------------------------
+
+story points — это относительные оценки объёма работы в истории
+scrum pocker -  техника оценки, основанная на достижении договорённости, главным образом используемая для оценки сложности предстоящей 
+	работы или относительного объёма решаемых задач
+
+-------------------------------------------------------------------------------------------------
+инструменты управления конфигурацией:
+Puppet 3.0
++
+	Модули могут быть написаны на ruby, или на более простом, производном от ruby языке
+	Команды Push позволяют применять изменения немедленно
+	Веб-интерфейс поддерживает отчеты, инвентаризацию и управление узлами в реальном времени
+	Детализированные отчеты о работе агентов и конфигурации узлов
+-
+	Требуется изучение встроенного языка или ruby
+	Процессу установки недостает отчетов об ошибках
+Chef 11.4
++
+	«Поваренные книги» и рецепты используют всю мощь ruby
+	Централизованные, основанные на JSON массивы данных позволяют скриптам заполнять переменные во время работы
+	Веб-интерфейс позволяет вести поиск и учет узлов, просматривать их активность, применять «поваренные книги» и роли
+-
+	Требуется знание ruby
+	В данный момент недостает функциональных команд push
+	Документация местами неясная
+Ansible 1.3
++
+	Модули могут быть написаны почти на любом языке
+	Не требуются агенты на управляемых узлах
+	Веб-интерфейс позволяет настраивать пользователей, команды и оборудование, применять сценарии
+	Очень просто настраивается и запускается
+-
+	Недостает поддержки клиентов для Windows
+	Веб-интерфейс автоматически не связывается с существующей установкой Ansible; данные должны быть импортированы
+Salt 0.17
++
+	Конфигурационные файлы могут быть простыми YAML-шаблонами или скриптами на pyhton и PyDSL
+	Может связываться с клиентами через SSH или с помощью локально установленных агентов
+	Веб-интерфейс позволяет просматривать запущенные задачи, статус подчиненных узлов и позволяет выполнять комнады на клиентах
+	Крайне хорошо масштабируется
+-
+	Веб-интерфейс не такой зрелый и полный как у конкурентов
+	Не хватает инструментов для детальных отчетов
+
+инструменты хранения конфигураций:
+ZooKeeper - служба, предназначенная для хранения конфигурационной информации, имён, 
+	выполнения распределённой синхронизации процессов. Фактически выполняет важнейшие задачи многих распределённых приложений. 
+	Является важной составляющей Hadoop-инфраструктуры, но может использовать отдельно.
+Typical use cases
+	Naming service
+	Configuration management
+	Synchronization
+	Leader election
+	Message queue
+	Notification system
+	
+---------------------------------------------------------------------------------------------------
+static nested class может обращаться к static обёртки. Внешний класс не имеет доступа ни к чему.
+member inner class может обращаться ко всему обёртки, не может иметь static внутри себя. Имеет доступ ко всему в высшем классе, высший класс не имеет прямого доступа ни к чему.
+local inner class может обращаться ко всему обёртки, может обращаться к final or effectively-final метода-родителя, не может иметь static внутри себя.
+an anonymous inner class is a local class without a name
+
+EXCEPTIONS:
+http://javastudy.ru/wp-content/uploads/2016/01/exceptionsInJavaHierarchy.png
+
+COLLECTION
+http://javastudy.ru/wp-content/uploads/2016/01/CollectionsHierarchy.png
+http://wiki3.cosc.canterbury.ac.nz/images/e/e9/JavaCollections.png
+
+Hashtable is syncronized and can't contain null keys or values
+
+Referencies:
+Strong reference(A a = new A();) is a standart reference in java. It means that the reference can be removed by GC only
+	if there is no objects to which this reference is connected (A a = null;)
+
+WeakReference (WeakReference<A> w = new WeakReference<>(a);) The reference will be deleted when there are no any strong references on an object and GC is launched.
+	
+Soft Reference (SoftReference<A> softref = new SoftReference<A>(a); ) will be removed only if the system runs out of memory and GC is launched
+
+PhantomReference<A> phantomRef = new PhantomReference<Gfg>(a,refQueue); will be removed instantly (will be put in ReferenceQueue actually)
+
+IN INTERFACE:
+public static final int FIELD = 5;
+
+public abstract void a();
+public default void def() {}
+public static void stat() {}
+
+public static class A{}
+public static abstract class A{}
+public static abstract interface A {}
+
+абстракция
+	interface 
+полиморфизм
+	interface входящий поток. Нам не важно из чего он был получен (файла, сети), мы работаем с интерфейсными методами.
+наследование
+инкапсуляция
+	сокрытие реализации за интерфейсом
+
+50 words - const, goto
+
+var name a-z, A-Z, 0-9, _, $
+
+primitive:
+byte 8    -2^7 2^7-1
+char 16     0 2^16-1    \u0000
+short 16     -2^15 2^15-1
+int 32
+long 64
+float 32
+double 64
+boolean JVM
+
+ssilochnie:
+class
+interface
+array
+
+SOLID:
+The Single Responsibility Principle: класс делает только что-то одно, что отображает название класса.
+The Open Closed Principle: классы закрыты для изменения, но открыты для расширения.
+The Liskov Substitution Principle: объекты в программе должны быть заменяемыми на экземпляры их подтипов без изменения правильности выполнения программы.
+The Interface Segregation Principle: много интерфейсов, специально предназначенных для клиентов, лучше, чем один интерфейс общего назначения.
+The Dependency Inversion Principle: зависимость на абстракциях, нет зависимости на что-то конкретное. Следует разрабатывать программное обеспечение таким образом, что различные модули были автономными, и соединялись друг с другом с помощью абстракции
+
+CLASS LOADERS:
+basic (bootstrap?) loader, extension loader, system loader.
+check if has in cache (system loader => extension loader => bootstrap loader)
+=> try to load (bootstrap loader => extension loader => system loader)
+=> java.lang.ClassNotFoundException
+static loading is with the 'new' opearator
+dynamic loading is on the fly using the static method Class.foName(Name of a class)
+
+INTERFACES MARKERS: Serializable, Cloneable, Remote, ThreadSafe
+
+THREADS:
+Thread.interrupted(); //static Get the flag and make it false ONLY for THIS Thread
+Thread.currentThread().isInterrupted(); //object Get the flag and don't touch it
+Thread.currentThread().interrupt(); //object Interrupt tne Thread object
+
+EXTENDS METHODS:
+public class Test1 {
+			Object meth(String a) throws Throwable  {
+        return "";
+    }
+}
+
+public class Test2 extends Test1 {
+    @Override
+    public String meth(String b) throws RuntimeException {
+        return "";
+    }
+}
+
+
+System.out.printf("%b %b %b", new Boolean("asdf"), "false", null);
+
+MVC:
+ты заказываешь бургер у официанта (controller), он отдаёт этот заказ другим работникам (model), те возвращают сделанный заказ (view).
+Ты делаешь запрос по ULR /getBurger (controller), он работает с данными на backend (model), конечный заказ попадает на html, например в виде таблицы бургеров (view)
+As per the above figure, when the user enters a URL in the browser, it goes to the server and calls appropriate controller. Then, 
+	the Controller uses the appropriate View and Model and creates the response and sends it back to the user. We will see the details of the interaction in the next few sections.
+
+Model is responsible for maintaining application data and business logic.
+View is a user interface of the application, which displays the data.
+Controller handles user's requests and renders appropriate View with Model data.
+
+JVM
+JRE = JVM + libraries
+JDK = JRE + compilers(javac) and other tools such as Javadoc, Jar, and a debuggers
+
+Java Runtime Environment (JRE) which contains the parts of the Java SE platform required to run Java programs and is intended for end users.
+Java Development Kit (JDK) which is intended for software developers and includes development tools such as the Java compiler, Javadoc, Jar, and a debugger.
+	
+XSL (XSLT, XPATH):
+
+<?xml version="1.0"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+    <xsl:template match="/ValCurs">
+        <valcurs>
+        <xsl:for-each select="Valute/CharCode[text()='CNY' or text()='USD' or text()='EUR']">
+            <valute>
+                <charcode><xsl:value-of select="../CharCode"/></charcode>
+                <value><xsl:value-of select="../Value"/></value>
+            </valute>
+        </xsl:for-each>
+        </valcurs>
+    </xsl:template>
+</xsl:stylesheet>
+
+
+
+
+
+
+
+
+
+CD, CI, DevOps:
+continious development, continious integration, develelopment and operations
+MAVEN, JENKINS, DOCKER
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Преимущества и недостатки метода Agile
+К преимуществам метода относятся:
+короткие и понятные итерации — циклы разработки длятся от 2 недели до 2 месяцев, по окончанию которых заказчик получает рабочую версию продукта
+высокая степень вовлечения исполнителей, организаторов и заказчиков проекта
+во главе угла стоит рабочий продукт как основной показатель прогресса — это можно рассматривать как плюс, так и минус, ведь в таком случае к команде проекта выдвигаются высокие требования по самоорганизации
+минимизация рисков благодаря гибкой системе внесения изменений.
+
+Не избежала методология и недостатков, которые органично «дополняют» её достоинства:
+стимулирование постоянных изменений проекта: гибкость разработки продукта может привести к тому, что он никогда не дойдёт до финальной версии
+повышенные требования к квалификации и опыту команды: помимо непосредственно создания продукта команда должна анализировать возможные способы улучшения эффективности собственной работы, беспрерывно обмениваться информацией по проекту, быть мотивированной и самоорганизованной. Далеко не всегда ресурсы проекта позволяют привлечь таких специалистов
+философский характер методологии: Agile — это не чёткая инструкция к действию, а целая философская концепция. Команда не может механически применить механики «гибкой» разработки, нужно принять ключевые принципы системы
+сложность подсчёта итоговой суммы работы: стимуляция изменений и усовершенствования конечного продукта приводит к плавающему значению стоимости проекта.
+
+Agile (англ. проворный) - это семейство «гибких» подходов к разработке ПО.
+«Люди и взаимодействие важнее процессов и инструментов. 
+Работающий продукт важнее исчерпывающей документации. 
+Сотрудничество с заказчиком важнее согласования условий контракта. 
+Готовность к изменениям важнее следования первоначальному плану»
+
+Акцент делается на людях, работающем продукте, сотрудничестве с заказчиком и готовности к изменениям.
+
+
+
+
+Scrum – это «подход структуры». Команда + владелец + scrum-мастер.
+Владелец соединяет команду с заказчиком и следит за развитием проекта.
+Scrum-мастер помогает первому организовать бизнес-процесс: проводит общие собрания, решает бытовые проблемы, 
+													мотивирует команду и следит за соблюдением scrum-подхода.
+Scrum-подход делит рабочий процесс на равные спринты
+
+
+
+
+Kanban – это «подход баланса».  Сбалансировать разных специалистов внутри команды.
+Бизнес-процесс делится не на универсальные спринты, а на стадии выполнения конкретных задач: 
+							«Планируется», «Разрабатывается», «Тестируется», «Завершено» и др.
+Используют доски: физические и электронные
+
+Вывод:
+Акцент делается на людях, работающем продукте, сотрудничестве с заказчиком и готовности к изменениям.
+Далее проект делитя на спринты и стадии разработки.
+Используют доски: физические и электронные.
+
+story points — это относительные оценки объёма работы в истории
+scrum pocker -  техника оценки, основанная на достижении договорённости, главным образом используемая для оценки сложности предстоящей 
+	работы или относительного объёма решаемых задач
+
+WATERFALL
+Преимущества и недостатки Waterfall
+В число наибольших преимуществ методики Waterfall вошли:
+понятная и простая структура процесса разработки — это снижает порог вхождения для команд
+удобная отчётность — можно легко отследить ресурсы, риски, затраченное время и финансы благодаря строгой этапности процесса разработки и детальной документации проекта
+стабильность задач — задачи, которые стоят перед продуктом, ясны команде с самого начала разработки, и остаются неизменными на протяжении всего процесса
+оценка стоимости и сроков сдачи проекта — сроки выпуска готового продукта, как и его итоговая стоимость могут быть просчитаны до момента запуска разработки.
+
+Среди недостатков водопадного метода можно выделить:
+лишенный гибкости процесс — так, если проект требует больше временных и финансовых ресурсов, чем возможно, то под нож пойдёт фаза тестирования. Согласно исследованиям консалт-группы Rothman, стоимость исправления багов после выпуска продукта выше в среднем в 20 раз, чем во время полноценного многоэтапного тестирования в процессе разработки
+«стойкость» к изменениям — жёсткий каркас из этапов разработки и условие предоставление только готового продукта определяют невозможность вносить изменения во время разработки
+инерционность — на первых стадиях прогноз временных и финансовых трат может измениться в сторону увеличения, но изменить проект в сторону оптимизации затрат, изменения функционала или концепции до выпуска готового продукта невозможно
+повышенный риск — классическая система тестирования подразумевает отдельно тестирование каждого из компонентов проекта, в том числе, во взаимодействии с другими. При использовании Waterfall происходит тестирование готового продукта.
+
+
+
+
+
+
+
+
+Patterns:
+singleton, decorator, doublecheckblocking, factory, proxy, observer, builder, strategy.
+
+Sorting:
+Bubble (самые большие в конец)
+Insertion (i in (1...last), i и назад)
+Selection (мин элементы слева направо)
+Heap (запихиваем в кучу, вытаскиваем самые маленькие по-очереди)
+Quick (делим по принципу слева все элементы больше или равны, а справа больше)
+Merge (делим пополам постоянно, пока не будет по одному элементу и совмещаем их по-очереди по возрастанию)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+JVM:
+-Xms256m - начальный размер памяти при запуске JVM
+-Xmx2048m - максимальный размер памяти при запуске JVM
+-Xss256m - память для стека
+-enableassertions(-ea) or -disableassertions (-da)
+JRE = JVM + core classes + library files
+
+
+
+
+
+
+
+
+
+
+MultiThreading:
+Semaphore s = new Semaphore(5, true); s.acquire(); s.release();
+CountDownLatch c = new CountDownLatch(1); c.await(); c.countDown();
+Exchanger
+CyclingBarrier
+
+
+
+
+
+
+
+
+
+Working in a large company you will know exactly what you have to do and how to achieve promotion. Stability and a clear plan for career growth.
+Working in a small comapny you will have closer ties with colleagues and it will be easier to stand out. Athmosphere can be more informal, more relaxed
+
+The last movie I have watched (my favorite movie) is Hachi: The Dog's Tale. The movie was released in 2009. The movie is about a dog which loved its owner so much. Hachi didn't know that its owner is dead 
+and had been waiting for him for the whole life. The most sad in this movie that the story is true. There is a monument of that dog in Japan.
+
+The last book I have read (My favorite book) is Kite. The author of the book is Lyu Sin'. The book is about a boy which broke his yonger brother's favorite toy and only many years later, 
+when he is not a young man anymore, he understands that he may have broken his brother's childhood and he is very sad because of it. 
+He tried to get forgiveness but his brother didn't remember anything about it and this sorrow will remain with him forever.
+
+/*
+Доброжелательный, рассудительный, усердный, мотивированный, усидчивый, ответственный, исполнительный, есть желание изучать новые технологии и постоянно усовершенствоваться.
+Friendly, diligent (усердный), motivated, plodding (усидчивый), responsible, executive, there is a desire to learn new technologies and constantly improve.
+*/
+
+Motivated, executive, responsible, diligent (усердный), plodding (усидчивый), friendly, there is a desire to learn new technologies and constantly improve.
+
+
+
+
+
+
+
+
+
+Принцип PECS (Producer Extends Consumer Super). Or Get and Put Principle.
+getAll(Collection<K> arg)
+Если arg отдаёт что-то методу, то он должен быть Collection<? extends K>
+Если arg принимает что-то из метода, то он должен быть Collection<? super K>
+
+public static void main(String[] args) {
+	method(new ArrayList<C>());
+}
+
+public static void method(List<? extends B> list) {
+	B b = list.get(0);
+}
+
+Если (? extends B), тогда 
+	можно передать в метод ArrayList<B> и  ArrayList<C>
+	в методе получаем B b col.get(0);
+	нельзя добавлять ничего add(new B()); // A or C either)
+Если (? super B)
+	тогда можно передать в метод ArrayList<B> и  ArrayList<A>
+	в аргумент можно добавить B и C col.add();
+	получить можно только Object col.get();
+	
+	
+Сложность алгоритма - функция зависимости объёма работы, которая выполняется некоторым алгоритмом, от размера входных данных

@@ -1,0 +1,109 @@
+java.util.concurrent можно формально поделить на неколько частей.
+Pools ExecutorServices
+	i Executor => i ExecutorService => a AbstractExecutorService => ThreadPoolExecutor or Executors.newFixedThreadPool or Executors.newCachedThreadPool
+	i Executor => i ExecutorService => i ScheduledExecutorService + ThreadPoolExecutor => ScheduledThreadPoolExecutor or Executors.newScheduledThreadPool
+	i Executor => i ExecutorService => a AbstractExecutorService => ForkJoinPool or Executors.newWorkStealingPool
+Locks ReentrantLock or ReentrantReadWriteLock
+Synchronizers Semaphore, CountDownLatch, CyclingBarrier, Phaser, Exchager, LocalThreadRandom
+Atomics
+Collections Collections.synchronizedCollection, CopyOnWriteArrayList,  CopyOnWriteArraySet, ConcurrentSkipListSet, ConcurrentSkipListMap, ConcurrentHashMap, 
+	ConcurrentLinkedQueue, ConcurrentLinkedDeque, LinkedBlockinQueue, LinkedBlockingDeque, ArrayBlockingQueue, PriorityBlockingQueue, DelayQueue, SynchronousQueue. 
+
+Deadlock: Все нити заблокированы, приложение в вечной блокировке.
+Livelock: Нити не заблокированы, но они находятся в бесконечном цикле. Программа работает, но не может продвинуться дальше.
+Starvation: Одни нить работает, а все остальные вечно ждут её.
+
+Process - исполнение программы.
+Thread (нить) - единица исполнения кода. В одном процессе может быть несколько потоков.
+
+Thread states:
+New
+Runnable
+Blocked
+Waiting
+Timed Waiting
+Terminated
+
+Collections.unmodified***
+
+Iterator Exceptions:
+next() 
+	NoSuchElementException - if the iteration has no more elements
+remove ()
+	UnsupportedOperationException - if the remove operation is not supported by this iterator
+	java.lang.IllegalStateException - Если вызвали метод remove() до вызова next()
+	java.util.ConcurrentModificationException - если удалять элемент не через единственный итератор. Если изменять коллекцию, по которой пробегается Iterator, вне этого итератора.
+
+Области уникальные для каждого потока: 
+ 1. pc (program counter) - разные указатели и мета-информация о потоке 
+ 2. jvm stack - то что мы и привыкли называть стеком, здесь хранятся фреймы (инфа о текущем запущенном методе) 
+ 3. Native Method Stacks - отдельный стек для нативных методов 
+Общие области: 
+ 4. Heap - хранилище объектов и область владения сборщика мусора 
+ 5. Method Area - хранит структуры каждого класса, такие как пул постоянной времени ( run-time constant pool) выполнения, данные полей и методов, а также код методов и конструкторов, 
+	 включая специальные методы, используемые при инициализации класса и экземпляра и инициализации интерфейса! И самое интересное! Метод Эриа может как обрабатываться сборщиком так и нет! 
+	 Если нет она будет очищена после инициализации классов и запуска программы. 
+ 6. Run-Time Constant Pool - да, оказывается для всех пулов (String pool, Integer pool и тд) есть отдельная область памяти!
+ 
+GARBAGE COLLECTORS
+Ways to call gc:
+System.gc() 
+Runtime.getRuntime().gc()
+protected void finalize() throws Throwable is called when GC works
+
+	  survivor space
+eden |  s0  |  s1   || tenured || permanent
+    young gen    	   old gen    permanent gen
+
+Young Generation: Newly created objects start in the Young Generation. The Young Generation is further subdivided into an Eden space, 
+	where all new objects start, and two Survivor spaces, where objects are moved from Eden after surviving one garbage collection cycle. 
+	When objects are garbage collected from the Young Generation, it is a minor garbage collection event.
+Old Generation: Objects that are long-lived are eventually moved from the Young Generation to the Old Generation. 
+	When objects are garbage collected from the Old Generation, it is a major garbage collection event.
+Permanent Generation: Metadata such as classes and methods are stored in the Permanent Generation. 
+	Classes that are no longer in use may be garbage collected from the Permanent Generation.
+	
+During a full garbage collection event, unused objects in all generations are garbage collected.
+
+HotSpot has four garbage collectors:
+Serial: Проходит в одном потоке. Блокирует поток, удаляет мусор, комплектует объекты, разблокирует поток.
+Parallel: Проходит во многих потоках параллельно и укладывает хип. Также замораживает приложение, зато потребляет мало CPU.
+CMS (Concurrent Mark Sweep): Как parallel, только сводит остановки приложения к минимуму и не укладывает объекты, но потребляет больше ресурсов.
+G1 (Garbage First): Как CMS, только укладывает ещё укладывает объекты.
+
+JMM:
+Освобождение (releasing) монитора happens-before заполучения (acquiring) того же самого монитора.
+Запись в volatile переменную happens-before чтения из той же самой переменной.
+
+JMC - это расширенный набор инструментов, который позволяет эффективно и детально анализировать обширные данные работы JVM. 
+JVisualVM - инструмент, позволяющий мониторить выполнение и прозводительность методов, снимать дампы, анализировать производительность, состояния потоков и памяти. 
+VisualGC - плагин для наблюдения распределения памяти по различным областям. 
+JConsol - инстумент, который предоставляет информацию о производительности и потреблении ресурсов приложений. 
+JMeter — инструмент для проведения нагрузочного тестирования
+
+The rules of happens-before are:
+1) Program order rule. Each action in a thread happens-before every action in that thread that comes later in the program order;
+2) Monitor lock rule. An unlock on a monitor lock happens-before every subsequent lock on that same monitor lock;
+3) Volatile variable rule. A write to a volatile field happens-before every subsequent read of that same field;
+4) Thread start rule. A call to Thread.start on a thread happens-before every action in the started thread;
+5) Thread termination rule. Any action in a thread happens-before any other thread detects that thread has terminated, 
+	either by successfully return from Thread.join or by Thread.isAlive returning false;
+6) Interruption rule. A thread calling interrupt on another thread happens-before the interrupted thread detects the interrupt 
+	(either by having InterruptedException thrown, or invoking isInterrupted or interrupted);
+7) Finalizer rule. The end of a constructor for an object happens-before the start of the finalizer for that object;
+8) Transitivity. If A happens-before B, and B happens-before C, then A happens-before C.
+
+CLASS LOADERS
+Bootstrap Class Loader – загружает внутренние классы JDK, typically loads rt.jar and other core classes for example java.lang.* package classes
+Extensions Class Loader – загружает классы из папки JDK extension, usually $JAVA_HOME/lib/ext directory.
+System Class Loader – загружает классы текущего приложения. It loads classes from the current classpath that can be set while invoking a program using -cp or -classpath command line options.
+
+STREAM API
+императивная — манипулирование состоянием; декларативная парадигма — отсутствие состояния.
+
+Laziness - intermediate operations will not executed until a terminal operation is called.
+Short-Circuit Behavior Поведение короткого замыкания - Short-circuiting will terminate the processing once condition met. There are a number of short-circuiting operations available. 
+	For e.g. anyMatch, allMatch, findFirst, findAny, limit, etc.
+Stateful Intermediate Operations: distinct(), sort(), limit(), etc. Могут замедлять производительность приложения.
+Stateless Intermediate Operations: filter(), map(), etc.
+Streams созданы для улучшения производительности, но не всегда эффективны, поэтому стримами нужно пользоваться мудро.

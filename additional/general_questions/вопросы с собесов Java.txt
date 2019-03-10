@@ -1,0 +1,25 @@
+1. Состояния Entity в Hibernate
+2. @Transactional private метод, будет создаваться транзакция?
+3. IoC
+4. Варианты конфигурации Spring(xml, annotations, java-based, groovy)
+5. scopes бинов
+6. сравнение примитивов и ссылок, обратить внимание на пулы(строковый и интовый)
+7. исключения + try/catch/finally
+8. работа GC
+9. типы ссылок (Strong, Soft, Weak, Phantom)
+10. методы класса Object
+11. в каком потоке вызывается метод finalize? - Ответ: в потоке GC
+12. equals и hashcode
+13. как происходит вставка в HashMap
+14. LinkedHashSet и TreeSet
+15. ArrayList и LinkedList
+16. ООП
+17. synchronized
+18. проблемы многопоточности и способы их решения
+19. immutable
+20. UML-диаграммы 0_o
+21. отличие функционального от модульного тестирования
+22. CI/CD системы
+23. системы сборки
+24. git: cherry-pick, push, commit
+25. сложность алгоритма

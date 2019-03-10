@@ -1,0 +1,534 @@
+Map:
+	int size();
+    boolean isEmpty();
+    boolean containsKey(Object key);
+    boolean containsValue(Object value);
+    V get(Object key);
+    V put(K key, V value);
+    V remove(Object key);
+    void putAll(Map<? extends K, ? extends V> m);
+    void clear();
+    Set<K> keySet();
+    Collection<V> values();
+    Set<Map.Entry<K, V>> entrySet();
+    boolean equals(Object o);
+    int hashCode();
+
+    interface Entry<K,V> {
+        K getKey();
+        V getValue();
+        V setValue(V value);
+        boolean equals(Object o);
+        int hashCode();
+
+        public static <K extends Comparable<? super K>, V> Comparator<Map.Entry<K,V>> comparingByKey() {
+            ...
+        }
+
+        public static <K, V extends Comparable<? super V>> Comparator<Map.Entry<K,V>> comparingByValue() {
+            ...
+        }
+
+        public static <K, V> Comparator<Map.Entry<K, V>> comparingByKey(Comparator<? super K> cmp) {
+            ...
+        }
+
+        public static <K, V> Comparator<Map.Entry<K, V>> comparingByValue(Comparator<? super V> cmp) {
+            ...
+        }
+    }
+
+    // Defaultable methods
+    default V getOrDefault(Object key, V defaultValue) {
+        ...
+    }
+
+    default void forEach(BiConsumer<? super K, ? super V> action) {
+        ...
+    }
+
+    default void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
+        ...
+    }
+
+    default V putIfAbsent(K key, V value) {
+       ...
+    }
+
+    default boolean remove(Object key, Object value) {
+        ...
+    }
+
+    default boolean replace(K key, V oldValue, V newValue) {
+        ...
+    }
+
+    default V replace(K key, V value) {
+        ...
+    }
+
+    default V computeIfAbsent(K key,
+            Function<? super K, ? extends V> mappingFunction) {
+        ...
+    }
+
+    default V computeIfPresent(K key,
+            BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+        ...
+    }
+
+    default V compute(K key,
+            BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+        ...
+    }
+
+    default V merge(K key, V value,
+            BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+        ...
+    }
+	
+	SortedMap:
+		Comparator<? super K> comparator();
+		SortedMap<K,V> subMap(K fromKey, K toKey);
+		SortedMap<K,V> headMap(K toKey);
+		SortedMap<K,V> tailMap(K fromKey);
+		K firstKey();
+		K lastKey();
+		Set<K> keySet();
+		Collection<V> values();
+		Set<Map.Entry<K, V>> entrySet();
+	
+		NavigableMap:
+			SortedMap methods + :
+			
+			Map.Entry<K,V> lowerEntry(K key);
+			K lowerKey(K key);
+			Map.Entry<K,V> floorEntry(K key);
+			K floorKey(K key);
+			Map.Entry<K,V> ceilingEntry(K key);
+			K ceilingKey(K key);
+			Map.Entry<K,V> higherEntry(K key);
+			K higherKey(K key);
+			Map.Entry<K,V> firstEntry();
+			Map.Entry<K,V> lastEntry();
+			Map.Entry<K,V> pollFirstEntry();
+			Map.Entry<K,V> pollLastEntry();
+			NavigableMap<K,V> descendingMap();
+			NavigableSet<K> navigableKeySet();
+			NavigableSet<K> descendingKeySet();
+			NavigableMap<K,V> subMap(K fromKey, boolean fromInclusive, K toKey,   boolean toInclusive);
+			NavigableMap<K,V> headMap(K toKey, boolean inclusive);
+			NavigableMap<K,V> tailMap(K fromKey, boolean inclusive);
+			
+Realizations:
+HashMap(хэш-таблица, O(log n))
+LinkedHashMap(LinkedList+хэш-таблица, то есть каждый элемент теперь ещё хранит и ссылки на предыдущий и следующий, O(1!) все)
+TreeMap(красно-черное дерево, сортирует ключи, O(log n) все операции.
+HashTable(deprecated, использует synchronized на всех методах, тем самым блокирует всю коллекцию для одного потока, не может иметь null)
+
+Collection:
+    int size();
+    boolean isEmpty();
+    boolean contains(Object o);
+    Iterator<E> iterator();
+    Object[] toArray();
+    <T> T[] toArray(T[] a);
+    boolean add(E e);
+    boolean remove(Object o);
+    boolean containsAll(Collection<?> c);
+    boolean addAll(Collection<? extends E> c);
+    boolean removeAll(Collection<?> c);
+    boolean retainAll(Collection<?> c);
+	void clear();
+    boolean equals(Object o);
+    int hashCode();
+
+    default boolean removeIf(Predicate<? super E> filter) {
+        ...
+    }
+
+    @Override
+    default Spliterator<E> spliterator() {
+        ...
+    }
+	
+    default Stream<E> stream() {
+        ...
+    }
+	
+    default Stream<E> parallelStream() {
+        ...
+    }
+
+	Set: (множество различных элементов)
+		SortedSet:
+			Comparator<? super E> comparator();
+			SortedSet<E> subSet(E fromElement, E toElement);
+			SortedSet<E> headSet(E toElement);
+			SortedSet<E> tailSet(E fromElement);
+			E first();
+			E last();
+			@Override
+			default Spliterator<E> spliterator() {
+				...
+			}
+				
+			NavigableSet:
+				E lower(E e);
+				E floor(E e);
+				E ceiling(E e);
+				E higher(E e);
+				E pollFirst();
+				E pollLast();
+				Iterator<E> iterator();
+				NavigableSet<E> descendingSet();
+				Iterator<E> descendingIterator();
+				NavigableSet<E> subSet(E fromElement, boolean fromInclusive,
+									   E toElement,   boolean toInclusive);
+				NavigableSet<E> headSet(E toElement, boolean inclusive);
+				NavigableSet<E> tailSet(E fromElement, boolean inclusive);
+			
+		
+	HashSet //использует внутри себя HashMap<> key: the object, value: new Object()-пустышка (массив связанных списков + хэш-функция)
+	
+	LinkedHashList //использует внутри себя LinkedHashMap<> key: the object, value: new Object()-пустышка
+	
+			TreeSet(черно-красное дерево, CRUD O(log n))
+			
+			
+	
+	
+	
+	
+	
+	List:
+		Realizations: ArrayList, LinkedList. Устаревшие: vector, stack.
+		
+		Methods:
+		
+		default void replaceAll(UnaryOperator<E> operator) {
+			...
+        }
+    
+		@SuppressWarnings({"unchecked", "rawtypes"})
+		default void sort(Comparator<? super E> c) {
+			Object[] a = this.toArray();
+			Arrays.sort(a, (Comparator) c);
+			ListIterator<E> i = this.listIterator();
+			for (Object e : a) {
+				i.next();
+				i.set((E) e);
+			}
+		}
+		
+		E get(int index);
+		E set(int index, E element);
+		void add(int index, E element);
+		E remove(int index);
+		int indexOf(Object o);
+		int lastIndexOf(Object o);
+		ListIterator<E> listIterator();
+		ListIterator<E> listIterator(int index);
+		List<E> subList(int fromIndex, int toIndex);
+		@Override
+		default Spliterator<E> spliterator() {
+			...
+		}
+			ArrayList:
+				methods:
+				ensureCapacity() //сделать ёмкость такого размера
+				trimToSize() //trim capacity to size
+				
+	Queue:
+		Realizations: PriorityQueue (based on a priority heap, O(log N) all,  doesn't support null)
+	
+		Methods:
+		boolean add(E e);
+		boolean offer(E e);
+		E remove();
+		E poll();
+		E element();
+		E peek();
+	
+		Deque:
+			Realizations: ArrayDeque (Массив without getByIndex and can't store null. Add and remove с обоих концов O(1), остальные O(n)), LinkedList
+			
+			Methods:
+			void addFirst(E e);
+			void addLast(E e);
+			boolean offerFirst(E e);
+			boolean offerLast(E e);
+			E removeFirst();
+			E removeLast();
+			E pollFirst();
+			E pollLast();
+			E getFirst();
+			E getLast();
+			E peekFirst();
+			E peekLast();
+			boolean removeFirstOccurrence(Object o);
+			boolean removeLastOccurrence(Object o);
+			boolean add(E e);
+			boolean offer(E e);
+			E remove();
+			E poll();
+			E element();
+			E peek();
+			void push(E e);
+			E pop();
+			boolean remove(Object o);
+			boolean contains(Object o);
+			public int size();
+			Iterator<E> iterator();
+			Iterator<E> descendingIterator();
+				
+ITERATOR
+Iterator methods: hasNext(), next(), remove();
+ListIterator methods: iterator methods + addObject(obj), set(obj), nextIndex(), previousIndex(), hasPrevios(), previous()
+Exceptions:
+	next() 
+		NoSuchElementException - if the iteration has no more elements
+	remove ()
+		UnsupportedOperationException - if the remove operation is not supported by this iterator
+		java.lang.IllegalStateException - if the next method has not yet been called, or the remove method has already been called after the last call to the next method
+			Если вызвали метод remove() до вызова next()
+		java.util.ConcurrentModificationException - если удалять элемент не через единственный итератор.
+		
+		
+1. List - Представляет собой неупорядоченную коллекцию, в которой допустимы дублирующие значения. Иногда их называют последовательностями (sequence ). 
+	Элементы такой коллекции пронумерованы, начиная от нуля, к ним можно обратиться по индексу. 
+2. Set - описывает неупорядоченную коллекцию, не содержащую повторяющихся элементов. Это соответствует математическому понятию множества (set).
+3. Queue - очередь (http://www.youtube.com/watch?feature=player_embedded&v=ugauQ769kVc#at=22 ). 
+	Это коллекция, предназначенная для хранения элементов в порядке, нужном для их обработки. В дополнение к базовым операциям интерфейса Collection, 
+	очередь предоставляет дополнительные операции вставки, получения и контроля.
+	
+	
+	
+		
+Почему устарел HashTable? Потому что он использует synchronized методы. Он работает медленее, чем HashMap в однопоточности, не может хранить null и медленее ConcurrentHashMap в многопоточности.
+ConcurrentHashMap использует segments. Это позволяет избежать блокировки чтения и значительно повышает производительность по сравнению с HashTable
+ConcurrentHashMap не выдает ConcurrentModificationException если один поток пытается изменить его, а другой выполняет итерацию по нему и не допускает нулевые значения.
+ConcurrentHashMap возвращает Iterator, который является отказоустойчивым (т.е. итератор сделает копию внутренней структуры данных) при одновременной модификации.
+ConcurrentHashMap использует логику разбиения базы данных (Segment<K, V>[] segments) известен как уровень параллелизма, то есть делит данные на осколки (сегменты), 
+затем ставит блокировки на каждый осколок (сегмент) вместо того, чтобы помещать единую блокировку для целого данные (Map). Значение по умолчанию - 16.
+concurrencyLevel
+
+Итак, основные преимущества и особенности реализации ConcurrentHashMap:
+Карта имеет схожий с hashmap интерфейс взаимодействия
+Операции чтения не требуют блокировок и выполняются параллельно
+Операции записи зачастую также могут выполняться параллельно без блокировок
+При создании указывается требуемый concurrencyLevel, определяемый по статистике чтения и записи
+Элементы карты имеют значение value, объявленное как volatile
+
+
+
+
+ImmutableClass:
+final class
+private final fields without setters
+Initialize all the fields via a constructor performing deep copy.
+В геттерах возвращать клонированный объект, а не ссылку на этот же объект.
+
+UnmodifiableCollection - это обёртка над коллекцией, которая не позволяет изменять коллекцию, но коллекция может изменяться извне.
+ImmutableCollection - это сама по себе неизменяемая коллекция, которую нельзя изменить никак.
+
+
+
+
+java.util.concurrent
+
+Concurrent Collections
+CopyOnWrite Collections. Перед изменением, копируют ссылки на данные и работают с ними. Не кидается ConcurrentModificationException.
+Операции изменения медленные, поэтому используется, когда эти операции редки, например при реализации механизма подписки listeners и прохода по ним.
+
+CopyOnWriteArrayList, CopyOnWriteArraySet
+
+MAPS:
+
+interface ConcurrentMap
+
+class ConcurrentHashMap. В отличие от Hashtable и блоков synhronized на HashMap, данные представлены в виде сегментов, 
+разбитых по hash'ам ключей. В результате, для доступ к данным лочится по сегментам, а не по одному объекту. В дополнение, 
+итераторы представляют данные на определенный срез времени и не кидают ConcurrentModificationException.
+
+interface ConcurrentNavigableMap. Расширяет интерфейс NavigableMap и вынуждает использовать ConcurrentNavigableMap объекты в качестве возвращаемых значений. 
+Все итераторы декларируются как безопасные к использованию и не кидают ConcurrentModificationException.
+
+class ConcurrentSkipListMap. Является аналогом TreeMap с поддержкой многопоточности. Данные также сортируются по ключу и гарантируется усредненная 
+производительность log(N) для containsKey, get, put, remove и других похожих операций.
+
+class ConcurrentSkipListSet. Имплементация Set интерфейса, выполненная на основе ConcurrentSkipListMap.
+
+QUEUES:
+
+NON-BLOCKING QUEUES
+class ConcurrentLinkedQueue. В имплементации используется wait-free алгоритм от Michael & Scott, адаптированный для работы с garbage collector'ом. 
+Этот алгоритм довольно эффективен и, что самое важное, очень быстр, т.к. построен на CAS. Метод size() может работать долго, т.ч. лучше постоянно его не дергать.
+
+ConcurrentLinkedDeque. Deque расшифровывается как Double ended queue и читается как «Deck». Это означает, что данные можно добавлять и вытаскивать с обоих сторон. 
+Соответственно, класс поддерживает оба режима работы: FIFO (First In First Out) и LIFO (Last In First Out). На практике, ConcurrentLinkedDeque стоит использовать 
+только, если обязательно нужно LIFO, т.к. за счет двунаправленности нод данный класс проигрывает по производительности на 40% по сравнению с ConcurrentLinkedQueue.
+
+
+BLOCKING QUEUES
+interface BlockingQueue. Есть возможность указать размер очереди, не принимают null. Блокируют при различных условиях.
+
+ArrayBlockingQueue. Размер очереди, fair блокировок.
+
+DelayQueue. Довольно специфичный класс, который позволяет вытаскивать элементы из очереди только по прошествии некоторой задержки, определенной в каждом элементе 
+через метод getDelay интерфейса Delayed.
+
+LinkedBlockingQueue. Блокирующая очередь на связанных нодах, реализованная на «two lock queue» алгоритме: один лок на добавление, другой на вытаскивание элемента. 
+За счет двух локов, по сравнению с ArrayBlockingQueue, данный класс показывает более высокую производительность, но и расход памяти у него выше. Размер очереди 
+задается через конструктор и по умолчанию равен Integer.MAX_VALUE.
+
+PriorityBlockingQueue. Является многопоточной оберткой над PriorityQueue.
+
+SynchronousQueue. Эта очередь работает по принципу один вошел, один вышел. 
+
+interface BlockingDeque. Интерфейс, описывающий дополнительные методы для двунаправленной блокирующей очереди.
+
+LinkedBlockingDeque. 1 Lock, Размер очереди задается через конструктор и по умолчанию равен Integer.MAX_VALUE.
+
+interface TransferQueue. Данный интерфейс может быть интересен тем, что при добавлении элемента в очередь существует возможность заблокировать вставляющий «Producer» 
+поток до тех пор, пока другой поток «Consumer» не вытащит элемент из очереди. Блокировка может быть как с таймаутом, так и вовсе может быть заменена проверкой на 
+наличие ожидающих «Consumer»ов. Тем самым появляется возможность реализации механизма передачи сообщений с поддержкой как синхронных, так и асинхронных сообщений.
+
+LinkedTransferQueue. Реализация TransferQueue на основе алгоритма Dual Queues with Slack. Активно использует CAS и парковку потоков, когда они находятся в режиме ожидания.
+
+ConcurrentHashMap.
+ConcurrentSkipListSet (ConcurrentSkipListMap) - concurrent TreeSet, TreeMap. Не кидают ConcurrentModificationException.
+	SkipList - вероятностная структура данных, основанная на нескольких параллельных отсортированных связных списках с эффективностью, 
+	сравнимой с двоичным деревом (порядка O(log n) среднее время для большинства операций).
+	Skiplist — это рандомизированная альтернатива деревьям поиска, в основе которой лежит несколько связных списков. Была изобретена William Pugh в 1989 году. 
+ConcurrentLinkedDeque.
+PriorityBlockingQueue.
+DelayQueue. Довольно специфичный класс, который позволяет вытаскивать элементы из очереди только по прошествии некоторой задержки, 
+	определенной в каждом элементе через метод getDelay интерфейса Delayed.
+	
+	
+	
+	
+LIST
+CopyOnWriteArrayList
+	Array. get O(1). add, remove, contains O(n). Get работает, как в обычном массиве, а вот изменяющие операции создают новый массив и вставляют его вместо старого.
+	Используется ссылка на состояние массива в момент создания итератора, и этот массив не изменится, пока существует этот итератор, 
+	поэтому ConcurrentModificationException не выскочет. Сам итератор тоже не может изменять массив. Его методы вызывают UnsupportedOperationException.
+	Null не разрешён. Также как и с другими concurrent коллекциями действия в потоке по добавлению элемента happens-before другие действия с ним из других потоков.
+	При изменении элементов поток блокирует остальные потоки на изменение, создаёт новый массив-копию, делает в ней изменения, заменяет старый массив новым, разблокирует.
+	Таким образом получается, что при чтение потоки получают разные объекты, обращаясь к одной и той же ссылке. Сложность времени выполнения как у Array
+Collections.synchronizedList
+	Возвращает синхронизированную обёртку над переданным list. Все методы, кроме iterator(), listIterator(), spliterator(), stream(), parallelStream(), 
+	synchronized на один и тот же объект. Нужно вручную синхронизировать не synchronized методы.
+
+SET
+CopyOnWriteArraySet
+	Использует внутри себя CopyOnWriteArrayList. Лучше всего подходит для небольшого количества элементов, операции чтения значительно превосходят операции 
+	изменения, но вам нужно предотвратить помехи между потоками при обходе коллекции. Операции изменения дорогие, так как они влекут за собой копирование 
+	всего массива. Итераторы не поддерживают операции изменения.
+	Итераторы полагаются на неизменяющиеся снимки массива, снятые в момент создания итератора. Подходит, например, для Handler.
+ConcurrentSkipListSet основан на ConcurrentSkipListMap.
+Collections.synchronizedSet
+Collections.synchronizedSortedSet
+Collections.synchronizedNavigableSet
+
+MAP
+ConcurrentHashMap. Хэш-таблицы. O(1). Замена java.util.Hashtable. Нет блокировки при чтении. При записи не блокируется вся таблица. Не поддерживает null как ключ или значение.
+	При совокупных операциях, таких как putAll, операция get или при проходе итератором, итератор получает лишь часть операций, которые он успел захватить
+	во время своего исполнения. Не кидается java.util.ConcurrentModificationException. Однако, итераторы сконструированы так, что только один поток может 
+	их использовать одновременно. Операции типа size отображают лишь значение в данный момент, которое может быть не актуально, если коллекция претерпевает 
+	в данный момент изменения. Bulk операции на java.util.Map.Entry не поддерживают setValue.
+ConcurrentSkipListMap. NavigableMap. Concurrent вариант SkipLists (несколько связанных списков). Average O(log n) timecost. 
+	Iterators and spliterators are weakly consistent. Ascending key ordered views and their iterators are faster than descending ones.
+	Все entry - это snapshots, they don't support setValue(), но можно через put и пр. Size показывает неточный, так как эта коллекция постоянно изменяется, 
+	даже во время итерация, которая подсчитывает текущий размер коллекции. Bulk (сложные) операции (putAll, equals, toArray, containsValue, clear) не гарантируют 
+	быть выполненными атомарно. Не работает с null ключами и значениями, потому что null-значения невозможно надёжно отличить от отсутствия значения.
+Collections.synchronizedMap
+Collections.synchronizedSortedMap
+Collections.synchronizedNavigableMap
+
+QUEUE
+ConcurrentLinkedQueue
+ConcurrentLinkedDeque
+	Linked Nodes. Add, remove, getFirst, getLast O(1), getOthers O(n). Doesn't support null. Может показывать  неверный size, так как во время обхода итератором другой поток мог изменить его. В то же время bulk operations, такие 
+	как addAll тоже могуть быть учтены не полностью. Как и в других concurrent collections, добавление элемента в коллекцию в каком-либо потоке happens-before работы с этим объектом 
+	в другом потоке.
+ArrayBlockingQueue
+LinkedBlockingQueue
+LinkedBlockingDeque
+DelayQueue
+    Использует внутри себя PriorityQueue. O(log n).
+	Безграничная блокирующая очередь из Delayed элементов, в которой каждый элемент может быть взят только когда его задержка истекла. Впереди очереди стоит тот элемент, который истёк раньше других.
+	Если никакой элемент не истёк, тогда вызов poll выдаст null. Expiration occurs when an element's getDelay(TimeUnit.NANOSECONDS) method returns a value <= 0. Не поддерживает null. Size вернёт все элементы.
+PriorityBlockingQueue
+	Priority heap. O(log n).
+	Безграничная блокирующая очередь работает по такому же принципу как PriorityQueue. Из-за того, что она безграничная, попытка добавления элемента может вызвать истощение ресурсов (OutOfMemoryError).
+	Нет работает с null. Не работает с не Comparable, выдаёт ClassCastException.
+SynchronousQueue
+LinkedTransferQueue
+Collections.synchronizedCollection
+
+
+
+
+
+==============================================================================================================================================================================
+Implementation note: The sorting algorithm is a Dual-Pivot Quicksort
+     * by Vladimir Yaroslavskiy, Jon Bentley, and Joshua Bloch. This algorithm
+     * offers O(n log(n)) performance on many data sets that cause other
+     * quicksorts to degrade to quadratic performance, and is typically
+     * faster than traditional (one-pivot) Quicksort implementations.
+	 
+	 
+Быстрая сортировка с двойным пивотом. На маленьких массивах используется сортировка вставками. Также используется pair insertion sort
+
+Если массив маленький, то он сортируется вставками. Берётся два пивота (точки опоры), чтобы собирать между ними одинаковые элементы, Use counting sort on large arrays
+
+
+CONCURRENTS:
+
+LIST
+CopyOnWriteArrayList
+
+SET
+CopyOnWriteArraySet
+ConcurrentSkipListSet
+
+MAP
+ConcurrentHashMap
+ConcurrentSkipListMap
+
+QUEUE
+ConcurrentLinkedQueue
+ConcurrentLinkedDeque
+ArrayBlockingQueue
+DelayQueue
+LinkedBlockingQueue
+PriorityBlockingQueue
+SynchronousQueue
+LinkedBlockingDeque
+LinkedTransferQueue
+
+
+Collections.unmodified***
+
+
+
+Iterator Exceptions:
+next() 
+	NoSuchElementException - if the iteration has no more elements
+remove ()
+	UnsupportedOperationException - if the remove operation is not supported by this iterator
+	java.lang.IllegalStateException - Если вызвали метод remove() до вызова next()
+	java.util.ConcurrentModificationException - если удалять элемент не через единственный итератор. Если изменять коллекцию, по которой пробегается Iterator, вне этого итератора.
+	
+	
+	
+	
+ConcurrentHashMap. 16 segments, non-blocking reading
+ConcurrentSkipListSet (ConcurrentSkipListMap) - concurrent TreeSet, TreeMap. Не кидают ConcurrentModificationException.
+ConcurrentLinkedDeque. Non-blocking
+PriorityBlockingQueue.
+DelayQueue. Довольно специфичный класс, который позволяет вытаскивать элементы из очереди только по прошествии некоторой задержки, определенной в каждом элементе через метод getDelay интерфейса Delayed.
+
+O(log n) значит, что при входном потоке n функция сработает за время <= log n.

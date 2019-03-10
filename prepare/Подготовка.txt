@@ -1,0 +1,144 @@
+https://jsehelper.blogspot.com/p/welcome.html
+
+Architecture knowledge	"OOP
+---------------------------------
+Functional Programming
+OOP
+SOLID
+Design Patterns
+Microservices architechure					сравнить с монолитной архитектурой
+
+
+
+
+Code Standards&Code Review Process			https://refactoring.guru/ru/refactoring
+----------------------------------			этого достаточно, пока что
+Code Standards								
+Code Smells									
+Refactoring
+Code Review Process&Experience
+
+
+
+
+Algorithms and data structures	
+-------------------------------------------------
+Big-O Notation for Algorithm Complexity
+Data Structures
+Basic fundamental algorithms				алгоритмы поиска (относительно различных структур данны - про "линейные" структуры отдельно, про графы отдельно)
+		Поиск в ширину и длину О(?)
+
+
+
+
+Testing	
+--------------------------------------------
+Unit Testing 								https://easyjava.ru/testirovanie/junit-2/
+											https://easyjava.ru/testirovanie/easymock/
+
+Integration Testing							- это и остально, просто знать определения
+Automation Testing
+Perfomance Testing
+Security Testing
+TDD
+BDD
+
+
+
+
+Troubleshooting/Logging/Monitoring	"Debugging
+--------------------------------------------
+Logging process								http://www.skipy.ru/useful/logging.html  + log4j
+Profiling									профайлеры - если будешь знать что это и для чего нужно, уже достаточно. Название одного профайлера знать (как опция).
+Profilers
+
+
+
+
+Version Control System(Git,tfs...)
+-------------------------------------------
+Base principles vcs.						зачем вообще нужен гит?
+Git											+ повтори комманды черипик и ребейз
+Gitflow										в понедельник напомни, расскажу самый простой вариант
+tfs,svn and etc								просто опция
+
+
+
+
+Development methodologies	
+---------------------------------------------------
+Agile										просто почитать и иметь представление о методалогиях
+Scrum/Kanban Structure
+Waterfall
+Story points								это и ниже про оценку времени
+Scrum pocker
+
+
+
+
+JAVA
+-----------------------------------------
+Core Java Development						https://jsehelper.blogspot.com/2016/01/blog-post_59.html
+Java Multithreading
+JVM, JDK and Tools							здесь ещё вспомни про JavaVisualVM
+Java 8 Features
+
+Web Components Development					в общих чертах повтори про сервлеты
+Web Services Development					SOAP и REST подходы
+
+
+
+
+Spring
+-------------------------------------------
+Spring Core
+Spring MVC
+Spring Data
+Spring Security
+Spring Boot
+
+
+
+
+Data Persistence (ORM)
+--------------------------------------
+JPA
+Hibernate
+
+
+
+
+Databases&Data
+-----------------------------------
+JDBC
+SQL Databases
+NOSQL Databases
+
+
+
+Build Systems
+----------------------------
+Maven 										просто поверхтносто по сути - ant и gradle
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

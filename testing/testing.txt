@@ -1,0 +1,337 @@
+Rules, поставляемые с JUnit
+JUnit содержит несколько заранее написанных правил:
+
+TemporaryFolder
+TestName
+ErrorCollector
+Verifier
+ExpectedException
+Timeout
+
+TemporaryFolder
+Предоставляет временную директорию для файлов, которая будет очищена после завершения теста (пример из официальной документации JUnit):
+    public static class HasTempFolder {
+      @Rule
+      public TemporaryFolder folder = new TemporaryFolder();
+
+      @Test
+      public void testUsingTempFolder() throws IOException {
+        File createdFile = folder.newFile("myfile.txt");
+        File createdFolder = folder.newFolder("subfolder");
+        // ...
+      }
+    }
+	
+TestName
+Позволяет тестам узнавать собственное имя:
+    @Rule
+    public TestName nameRule = new TestName();
+
+    @Test
+    public void testIsEmpty() {
+        assertFalse("Non empty string claimed to be empty", StringUtils.isEmpty("TEST"));
+        assertTrue("Empty string not recognized", StringUtils.isEmpty(""));
+        assertTrue("Whitespaces not recognized", StringUtils.isEmpty(" "));
+
+        assertFalse("Test name could not be empty", StringUtils.isEmpty(nameRule.getMethodName()));
+    }
+	
+ErrorCollector
+Собирает ошибки, возникающие в ходе выпонения теста и проваливает весь тест целиком. Полезен, когда проверяется поведение при каких-то независимых условиях и хочется проверить всё сразу:
+    @Rule
+    public ErrorCollector collectorRule = new ErrorCollector();
+
+    @Test
+    public void testToDouble() {
+        collectorRule.checkThat(
+                StringUtils.toDouble("3.1415"),
+                is(closeTo(3.1415, 0.0001)));
+
+        collectorRule.checkThat(
+                StringUtils.toDouble(null),
+                is(Double.NaN));
+  	
+Если при выполнении теста возникнут ошибки, они будут записаны, а тест продолжит своё выполнение. Список ошибок будет выведен после завершения теста.
+
+Verifier
+Базовый класс для ErrorCollectior , позволяет провалить успешный тест, если он не проходит проверку после выполнения (пример из официальной документации JUnit):
+    private static String sequence;
+
+    public static class UsesVerifier {
+      @Rule
+      public Verifier collector = new Verifier() {
+        @Override
+        protected void verify() {
+          sequence += "verify ";
+        }
+      };
+
+      @Test
+      public void example() {
+        sequence += "test ";
+      }
+    }
+
+    @Test
+    public void verifierRunsAfterTest() {
+      sequence = "";
+      assertThat(testResult(UsesVerifier.class), isSuccessful());
+      assertEquals("test verify ", sequence);
+    }
+
+ExpectedException
+Улучшает поддержку исключений в JUnit. Это правило подробно рассмотрено в статье о тестировании исключений.
+Помимо описанного там обычно применения, можно использовать это правило совместое с теориями, для перехвата исключений в них (хотя отсуствие expectedException у аннотации @Theory  как бы говорит нам, что так лучше не делать):
+@RunWith(Theories.class)
+public class StringConversionTest {
+    @DataPoint public static String A = "q";
+    @DataPoint
+    public static String B = "w";
+    //Next line will fail
+    //@DataPoint public static String C = "17";
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Theory
+    public void StringNotANumber(String value) {
+        thrown.expect(NumberFormatException.class);
+        Integer.valueOf(value);
+    }
+}
+
+
+
+
+
+Suite — это, в терминах JUnit, набор из нескольких классов с тестами, исполняемый как один большой класс с тестами
+
+JUnit tests are started using the JUnitCore class. This can either be done by running it from command line or using one of its various run() methods (this is what your IDE does for you if you press the run test button).
+
+https://www.mscharhag.com/files/2014/junit-runner.png
+Runner is a very simple class that implements the Describable interface and has two abstract methods
+public abstract class Runner implements Describable {
+  public abstract Description getDescription();
+  public abstract void run(RunNotifier notifier);
+}
+
+The method getDescription() is inherited from Describable and has to return a Description. Descriptions contain the information that is later being exported and used by various tools. For example, your IDE might use this information to display the test results.
+run() is a very generic method that runs something (e.g. a test class or a test suite).
+I think usually Runner is not the class you want to extend (it is just too generous).
+
+In ParentRunner things get a bit more specific. ParentRunner is an abstract base class for Runners that have multiple children. It is important to understand here, that tests are structured and executed in a hierarchical order (think of a tree).
+For example: You might run a test suite which contains other test suites. These test suites then might contain multiple test classes. And finally each test class can contain multiple test methods.
+
+ParentRunner has the following three abstract methods:
+public abstract class ParentRunner<T> extends Runner implements Filterable, Sortable {    
+  protected abstract List<T> getChildren();
+  protected abstract Description describeChild(T child);
+  protected abstract void runChild(T child, RunNotifier notifier);
+}
+
+Subclasses need to return a list of the generic type T in getChildren(). ParentRunner then asks the subclass to create a Description for each child (describeChild()) and finally to run each child (runChild()).
+
+Now let's look at two standard ParentRunners: BlockJUnit4ClassRunner and Suite.
+
+BlockJUnit4ClassRunner is the default Runner that is used if no other Runner is provided. So this is the Runner that is typically used if you run a single test class. If you look at the source of BlockJUnit4ClassRunner you will see something like this:
+
+	public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
+	 
+	  @Override
+	  protected List<FrameworkMethod> getChildren() {
+	    // scan test class for methonds annotated with @Test
+	  }
+	 
+	  @Override
+	  protected Description describeChild(FrameworkMethod method) {
+	    // create Description based on method name
+	  }
+	 
+	  @Override
+	  protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
+	    if (/* method not annotated with @Ignore */) {
+	      // run methods annotated with @Before
+	      // run test method
+	      // run methods annotated with @After
+	    }
+	  }
+	}
+
+The Suite Runner is used to create test suites. Suites are collections of tests (or other suites). A simple suite definition looks like this:
+	@RunWith(Suite.class)
+	@Suite.SuiteClasses({
+	  MyJUnitTestClass1.class,
+	  MyJUnitTestClass2.class,
+	  MyOtherTestSuite.class
+	})
+	public class MyTestSuite {}
+A test suite is created by selecting the Suite Runner with the @RunWith annotation. If you look at the implementation of Suite you will see that it is actually very simple. The only thing Suite does, is to create Runner instances from the classes defined using the @SuiteClasses annotation. So getChildren() returns a list of Runners and runChild() delegates the execution to the corresponding runner.
+
+With the provided information it should not be that hard to create your own JUnit Runner (at least I hope so). If you are looking for some example custom Runner implementations you can have a look at the following list:
+
+Conclusion
+JUnit Runners are highly customizable and give you the option to change to complete test execution process. The cool thing is that can change the whole test process and still use all the JUnit integration points of your IDE, build server, etc.
+If you only want to make minor changes it is a good idea to have a look at the protected methods of BlockJUnit4Class runner. Chances are high you find an overridable method at the right location.
+
+===============================================================================================================
+MOCK
+
+public class GreeterTargetImplTest {
+
+EasyMockRule это правило JUnit, которое и реализует всю магию — обрабатывает переменные с аннотациями @Mock и @TestedObject
+    @Rule
+    public EasyMockRule em = new EasyMockRule(this);
+
+	Каждая переменная с аннотацией @Mock обрабатывается правилом EasyMockRule и из неё создаётся mock объект. Состояние этого mock объекта будет сбрасываться к исходному автоматически, при вызове каждого теста.
+    @Mock(type = MockType.NICE)
+    private Coin coinMock;
+
+	@TestSubject указывает EasyMock, какая из переменных класса является тестируемым классом. EasyMock использует эту информацию для автоматического связывания mock объектов с тестируемым объектом. Подробно вопросы связывания я рассмотрю в отдельной статье.
+    @TestSubject
+    private GreeterTargetImpl testedObject = new GreeterTargetImpl(coinMock);
+
+	Самый первый тест начинается с определения поведения mock объекта Coin: мы говорим, что будет вызван метод get() и что в ответ он должен вернуть true.
+    Вызов replay(coinMock) говорит EasyMock, что мы закончили с определением поведения mock объектов и дальнейшие вызовы должны воспроизводить заданное поведение.
+	@Test
+    public void testTrue() {
+        expect(coinMock.toss()).andReturn(true);
+        replay(coinMock);
+
+        assertThat(testedObject.get(), is("World"));
+    }
+
+	Здесь даже не определяется никакое поведение. Почему? Потому что в аннотации @Mock я указал, что хочу так называемый «nice mock». Nice mocks облегчают труд по созданию тестовых дублёров — все публичные методы nice mock возвращают значение по умолчанию, если их поведение не переопределено:
+    @Test
+    public void testFalse() {
+        replay(coinMock);
+
+        assertThat(testedObject.get(), is("Spring"));
+    }
+}
+
+ аннотация @Mock(type = MockType.NICE) создает full nice non-strict mock, что означает «mock с подменой всех методов, поведением по умолчанию и без проверки порядка вызовов».
+ 
+В аннотацию @Mock передаётся параметр type, который может принимать три значения:
+MockType.NICE
+MockType.DEFAULT
+MockType.STRICT
+
+Причем значение по умолчанию… MockType.DEFAULT которое создаёт mock требующий явного задания поведения через вызов expect() и если вызвать метод, для которого поведение не задано, EasyMock выбросит AssertionError  и провалит тест.
+
+В отличие от default типа, mock с MockType.NICE создаёт mock с поведением по умолчанию: для каждого не private и не final метода класса будет возвращено значение по умолчанию, если поведение метода не задано
+
+MockType.Strict ещё больше закручивает гайки — для mock’а этого типа не только обязательно надо задавать поведение методов явно, но и именно в том порядке, в котором их будет проверять тестируемый код
+
+Partial Mock
+Аннотация @Mock создаёт full mock объект, у которого все не final и не private методы заменены на методы, сгенерированные EasyMock. Однако иногда требуется заменить только некоторые методы, например когда тестируемый класс вызывает сам себя и мы тестируем вызывающий код. В этом случае можно вручную создать частичный (partial) mock
+	@Test
+	public void testGreeting() {
+		Service testedObject = partialMockBuilder(Service.class)
+				.addMockedMethod("getName")
+				.createMock();
+	 
+		expect(testedObjet.getName()).andReturn("TEST");
+		replay(testedObject);
+	 
+		assertThat(testedObject.getGreeting(), is("Hello TEST"));
+	}
+Надо отметить, что в partial mock стандартные методы класса Object, такие как equals(), hashCode(), toString(), finalize() не будут заменены, если их явно не указать в addMockedMethod(). Это отличается от поведения full mock, у которого эти методы так же заменяются на EasyMock реализации.
+
+Stub mocks
+Stub mock это не совсем разновидность mock’а, это вариант его использования. Выше, говоря про strict mock’и я говорил, что для этого типа mock-объектов проверяется порядок вызовов, то есть поведение. Для default mock’ов поведение тоже проверятся: количество вызовов, обязательность вызовов, параметры итд. Но, если вы тестируете результат выполнения, а не поведение, то все эти возможности только мешают.
+Например у вас есть зависимость, у которой можно спросить текущего пользователя.  Некоторые методы тестируемого класса вызывают этот метод, некоторые не вызывают, а некоторые вызывают дважды. Описывать это поведение для каждого теста не только неудобно, но и вызывает дополнительную работу при рефакторинге. При том, что поведение этого метода нам вообщем-то неинтересно вовсе.
+Решение этой проблемы в замене результата вызова expect():
+	@Mock
+	private UserService userService;
+
+	@TestedObject
+	private DataService dataService;
+
+	@Before
+	public void setUp() {
+		expect(userService.getCurrentUser).andStubReturn(EXAMPLE_USER);
+		replay(userService);
+	}
+
+	@Test
+	public void testSomething() {
+		assertThat(dataService.getDataForUser(), is(SAMPLE_DATA));
+	}
+andStubReturn() говорит EasyMock, что мы не беспокоимся о том, когда вызван этот метод, сколько раз он вызван или вызыван ли вообще.
+Stub методы можно использовать и с исключениями и с динамически генерируемыми ответами. В одном mock объекте можно смешивать и stub и поведенческие методы. А тестированию поведения будет посвящена отдельная статья.
+
+==========================================================================
+TESTINGS:
+• Unit Test: Mostly focus on the smallest unit of the business code which is tend
+to focus on single class. In this test you don’t need to run a container, just
+execute some code to test the business logic code. Small, quick and finegrained. White box.
+• Integration Test: Use to test the whole software which is you need a Java EE
+environment to do this. In this test you combine several components,
+for example, EJB, JPA, CDI and many Java EE API which is need a
+container, a real environment like. Slow and coarse-grained.
+• System Test: Unit and integration test was good, but sometimes you need to
+test the software in real environment. Including application server, database,
+server configuration which is the only different it’s not the real production server
+• Acceptance testing -> clients needs.
+
+Good test it must be fast, reliable and easy to write and maintain
+
+Разработка через тестирование (TDD) — техника разработки
+программного обеспечения, которая основывается на повторении очень
+коротких циклов разработки: сначала пишется тест, покрывающий желаемое
+изменение, затем пишется код, который позволит пройти тест, и под конец
+проводится рефакторинг нового кода к соответствующим стандартам. Кент
+Бек, считающийся изобретателем этой техники, утверждал в 2003 году, что
+разработка через тестирование поощряет простой дизайн и внушает
+уверенность.
+Модульные тесты неявно задают требования к функциональности,
+показывая конкретные примеры его использования.
+
+Test passes -> refactor -> test fails -> Test passes...
+
+Основные функции TDD
+• Уменьшение количества дефектов
+• Поддержка низкоуровневого дизайна
+• Поддержка рефакторинга
+• Поддержка отладки
+• Помощь в документации кода
+
+Тестировать нужно все, что потенциально может не работать
+
+JUnit, TestNG, EasyMock, Mockito, arquillian
+
+Testing Servlet
+• JAX-RS Client API comes in very handy!
+• JUnit, HttpUnit, HtmlUnit good tools as well
+• Traditional problem is bootstrapping containers from tests (see if your container can be embedded into a unit test)
+• Selenium can be good choices too
+
+Testing WebLayer
+• Warp ideal for complete JSF testing
+• Client and server-side tests
+• Drone/Selenium, Graphene often sufficient
+
+Testing JAX-RS, JAX-WS and WebSocket
+• You can use JAX-RS, WebSocket and JAX-WS client APIs with JUnit/Arquillian
+• Jersey Test Framework is also very good
+• For more complex cases consider UI based testing tools (e.g. SoapUI for REST
+and SOAP)
+
+Testing CDI / EJB
+• CDI increases Java EE component model level testability by leaps and bounds
+• Embedded containers, generic dependency injection, @Alternative, portable
+extensions, XML deployment descriptors, interceptors enablers
+• Both mock object based unit testing as well as integration testing is possible
+• Likely best to stick with integration testing using close to the real runtime environment
+• Arquillian/ShrinkWrap ideal cross-vendor CDI/EJB testing tools
+• Apache MyFaces CODI Testing another option
+
+Testing JPA
+• Embedded containers/CDI tools with JUnit integration works well for JPA
+• Consider using embedded databases like Java DB, Derby, HSQL
+• You can use JPA data loading, schema generation and DBUnit for
+better data consistency
+• JPA supports Java SE environments, non-JTA transactions, JDBC
+database connections for simpler cases
+• For simplest cases JUnit, EasyMock, Mockito or even EJB3Unit works
+• Tests can use transactions

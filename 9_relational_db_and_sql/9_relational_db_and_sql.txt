@@ -1,0 +1,1136 @@
+SQL - Structured Query Language
+
+SQL является стандартом ANSI, но существует большое количество версий данного языка запросов.
+SQL является стандартным языком для Систем Управления Реляционными Базами Данных – СУБД (RDBMS), таких как MySQL, Oracle, Postgres и т.д.
+Эти системы используют различные диалекты SQL: Oracle – PL/SQL, MS SQL – T-SQL, ...
+
+Преимущества SQL:
+Позволяет пользователям получать доступ к данным в RDBMS.
+Позволяет пользователям описывать данные.
+Позволяет пользователям определять данные в БД и манипулировать ими.
+Позволяет встраивать другие языки, используя модули SQL, библиотеки и пре-компиляторы.
+Позволяет пользователям создавать и удалять БД и таблицы.
+Позволяет пользователю создавать встроенные виды, процедуры и функции, триггеры, курсоры в БД.
+Позволяет ограничивать доступ к таблицам, процедурам и видам.
+
+Принцип работы SQL:
+Когда мы выполняем команду SQL для любой RDBMS, система определяет наилучший способ для обработки нашего запроса и модуль управление (“двигатель”) SQL вычисляет, как интерпретировать задачу.
+
+В данный процесс включены такие компоненты:
+Query
+Dispatcher
+Optimization Engines
+Classic Query Engine обрабатывает все не-SQL запросы
+SQL Query Engine не обрабатывает логические файлы 
+и т.д.
+
+SQL Команды
+Данные команды разбиты на две большие категории:
+	DDL – Data Definition Language: CREATE ALTER DROP
+	DML – Data Manipulation Language: SELECT INSERT UPDATE DELETE
+	Data query language (DQL) – allows searching for information and computing derived information.
+DCL – Data Control Language: GRANT(Даёт все привилегии пользователю), REVOKE(Отменяет привилегии отданные пользователю)
+-----------
+DDL - definition
+    		CREATE 	// CREATE DATABASE name;
+    		ALTER 	// редактирование данных: ALTER TABLE имя_таблицы DROP COLUMN имя_колонки;
+		DROP
+ DML - manipulation
+		INSERT
+		UPDATE
+		DELETE
+		MERGE
+ DQL - query
+		SELECT
+ DCL - control
+		GRANT
+		DENY
+		REVOKE
+ TCL - transaction
+		COMMIT
+		ROLLBACK
+		SAVEPOINT
+		SET
+==============================================================================================================================
+
+RDBMS(СУБД)
+
+RBDMS (Relational Database Management System) – это система для управления базами данных (далее – БД), базирующаяся на реляционной модели.
+
+В RDBMS данные хранятся в объектах, которые называются таблицами. 
+Таблица – это набор связанных по смыслу данных, состоящий из столбцов и рядов.
+
+Каждая таблица состоит из сущностей, которые называются ПОЛЯМИ: id, name, salary...
+
+ЗАПИСЬ(РЯД) – это каждая отдельный элемент, который хранится в таблице. 
+Запись – это сущность, которая хранится горизонтально.
+
+КОЛОНКА – это вертикальная сущность в таблице, которая содержит всю информацию, связанную с определённым полем таблицы.
+
+Значение NULL в таблице – это поле, которое мы видим, как пустое. Это означает, что данное поле таблицы не имеет значения.
+
+CONSTRAINT - это набор правил, применённый к данным колонок в таблице. Они используются для ограничения типов данных, которые могут храниться в таблице. 
+	Это также обеспечивает точность и читабельность данных в БД.
+NOT NULL, 
+DEFAULT Обеспечивает значение по умолчанию для колонки, в случае, если данные не указаны.
+UNIQUE 
+PRIMARY KEY Уникальный идентификатор каждой записи в таблице БД.
+FOREIGN KE, Уникальный идентификатор записи в другой таблице БД.
+CHECK Гарантирует, что все занчения в колонке соответствуют определённому условию.
+INDEX Используется для крайне быстрого создания и получения данных из БД.
+
+INTEGRITY (целостность, честность)
+Entity - В таблице нет повторяющихся данных.
+Domain - Использует валидные вводы для указанной колонки путём ограничения типа, формата или диапазона значений.  Constraints?
+Referential - Записи, которые используются другими записями, не могут быть удалены.
+Определённая пользователем - Использует некоторые специфические правила, которые не укладываются в три, указанные выше категории.
+
+НОРМАЛИЗАЦИЯ БД – это процесс эффективной организации данных в БД. 
+Существует две причины для процесса нормализации:
+	1) Выявление ненужных данных, например, хранение одних и тех же данных более, чем в одной таблице.
+	2) Гарантирование того, что зависимости между данными имеют значение.
+Обе эти цели крайне важны, так как они уменьшают количество памяти, необходимой для БД и гарантируют логическое хранение данных. 
+Руководства по нормализации разделяются на нормальные формы (формат или способ структурирования БД)
+
+Цель нормальной формы – организация структуры БД таким образом чтобы она отвечала правилам первой, второй или третьей нормальной формы:
+Первая нормальная форма (1НФ)
+	Определяет необходимые данные, которые становятся колонками таблицы. Размещает связанные по смыслу данные в таблице. Специальности в Специальности и т.д.
+	Гарантирует, что в БД нет повторяющихся групп данных. Создать две таблицы, одна из которых будет содержать поле с ID другой.
+	Гарантирует, что каждая таблица содержит первичный ключ (primary Key).
+	Programming : [Java, C++], Web: [HTML, PHP, ASP] becomes:
+	Programming Java
+	Programming c++
+	Web			HTML
+	Web			PHP
+	Web			ASP
+Вторая нормальная форма (2 НФ)
+	1НФ + Нужно разделять таблицу на две и создавать третью таблицу для связи между ними.
+	1 table - 1 primary key
+Тертья нормальная форма (3 НФ)
+	2НФ + Все не главные поля зависят от первичного ключа (primary key). 
+	Создать две таблицы, одна из которых будет содержать поле с ID другой. Обе таблицы имеют только относящиеся к ним поля.
+	Stu_ID -> Stu_name - City -> ZIP becomes:
+	Stu_ID -> Stu_Name - ZIP
+	Zip -> City
+Boyce-Codd Normal Form
+	For any non-trivial functional dependency, X → A, X must be a super-key.
+	
+	
+1 НФ:
+	Основным правилом первой формы является необходимость неделимости значения в каждом поле (столбце) строки – атомарность значений.
+	Переменная отношения находится в первой нормальной форме (1НФ) тогда и только тогда, когда в любом допустимом значении отношения каждый его кортеж содержит только одно значение для каждого из атрибутов.
+	Отношение находится в 1НФ, если все его атрибуты являются атомарными, т.е. не имеют компонентов.
+	Первая нормальная форма (1НФ) выполняется, если все значения атрибутов (читай, колонок таблицы) атомарны, то есть неделимы.
+	BMW			M5, X5M, M1
+	Nissan		GT-R
+	=>
+	BMW			M5
+	BMW			X5M
+	BMW			M1
+	Nissan		GT-R
+	
+	Eliminate repeating groups in individual tables.
+	Create a separate table for each set of related data.
+	Identify each set of related data with a primary key.
+	
+	Атомарность или неделимость. Каждая колонка должна содержать одно неделимое значение.
+	Таблица не должна содержать повторяющихся колонок или групп данных.
+2 НФ:
+	Условием этой формы является отсутствие зависимости неключевых полей от части составного ключа.
+	Переменная отношения находится во второй нормальной форме тогда и только тогда, когда она находится в первой нормальной форме и каждый неключевой атрибут неприводимо (функционально полно) зависит от её потенциального ключа.
+	Отношение находится во 2НФ, если оно находится в 1НФ, и при этом любой атрибут, не входящий в состав ПК, функционально полно зависит от ПК.
+	Все атрибуты целиком зависят от составного ключа и не зависят ни от какой его части.
+	Между трибутами отношения нет транзитивных зависимостей.
+	M5			BMW			5500000			5%
+	X5M			BMW			6000000			5%
+	M1			BMW			2500000			5%
+	GT-R		Nissan		5000000			10%
+	Цену машины зависит от модели и фирмы. Скидка зависят от фирмы, то есть зависимость от первичного ключа неполная. Исправляется это путем декомпозиции на два отношения, в которых не ключевые атрибуты зависят от ПК.
+	=>
+	M5			BMW			5500000
+	X5M			BMW			6000000	
+	M1			BMW			2500000
+	GT-R		Nissan		5000000
+	+
+	BMW			5%
+	Nissan		10%
+	
+	Create separate tables for sets of values that apply to multiple records.
+	Relate these tables with a foreign key.
+	
+	Любой столбец, который не является ключом (в том числе внешним), должен зависеть от первичного ключа
+3 НФ:
+	3NF схожа по логике с 2NF, но с некоторым отличием. Если 2 форма ликвидирует зависимости неключевых полей от части ключа, то третья нормальная форма исключает зависимость неключевых полей от других неключевых полей.
+	Переменная отношения находится в третьей нормальной форме тогда и только тогда, когда она находится во второй нормальной форме, и отсутствуют транзитивные функциональные зависимости неключевых атрибутов от ключевых.
+	Отношение находится в 3НФ, если оно находится во 2НФ и при этом любой его неключевой атрибут нетранзитивно (напрямую) зависит от первичного ключа.
+	BMW			Риал-авто	87-33-98
+	Audi		Риал-авто	87-33-98
+	Nissan		Некст-Авто	94-54-12
+	Телефон не может зависеть от Модели
+	=>
+	Риал-авто	 87-33-98 
+	Риал-авто 	 87-33-98 
+	Некст-Авто	 94-54-12
+	+
+	BMW		Риал-авто
+	Audi	Риал-авто
+	Nissan	Некст-Авто
+	
+	Eliminate fields that do not depend on the key.
+	
+	Каждый не ключевой столбец независим друг от друга.
+	
+Нормальная форма — требование, предъявляемое к структуре таблиц в теории реляционных баз данных для устранения из базы избыточных функциональных зависимостей между атрибутами (полями таблиц).
+	
+База данных – это всего лишь набор взаимосвязанных данных.
+
+Типы бд:
+1. hierarchical database system --- single parent hierarchy
+2. network database system --- multiparent hierarchy ---> связи (links) + отношения (relationships)
+3. Relational database system
+
+Процесс улучшения структуры базы данных с целью обеспечения хранения всех независимых элементов данных только в одном месте (за исключением внешних ключей)
+называют нормализацией (normalization).
+
+SET SQL_SAFE_UPDATES = 0;
+
+Cтроки фиксированной длины справа дополняются пробелами, тогда как строки переменной длины – нет.
+
+SHOW CHARACTER SET;
+
+gender ENUM('M','F')
+
+count(val)	- игнорирует null
+count(*)	- учитывает
+
+/** WRITE A RESULT INTO A FILE */
+SELECT emp_id, fname, lname, start_date
+INTO OUTFILE 'C:\\TEMP\\emp_list.txt'
+FROM employee;
+==============================================================================================================================
+
+БАЗОВЫЙ СИНТАКСИС
+SELECT COUNT DISTINCT WHERE BETWEEN IN AND OR LIKE ORDER BY(rand()) DESC INC GROUP BY HAVING 
+INSERT INTO table_name (col1, col2...) VALUES (val1, val2...), (val3, val4...)
+UPDATE table_name SET col1 = val1, col2 = val2... WHERE [cond]
+DELETE FROM table_name WHERE [cond]
+ALTER TABLE(ALTER TABLE table_name RENAME TO new_table_name);
+DROP DATABASE, SCHEMA TABLE INDEX(ALTER TABLE tale_name DROP INDEX index_name);
+CREATE DATABASE, SCHEMA TABLE INDEX(CREATE UNIQUE INDEX some_name ON table_name(col1, col2...);
+USE db_name
+SHOW
+TRUNCATE TABLE
+COMMIT;
+ROLLBACK;
+==============================================================================================================================
+
+ТИПЫ ДАННЫХ
+Тип данных в языке структурированных запросов SQL – это атрибут, которые определяет тип данных любого объекта. 
+Каждая колонка, переменная и выражение должны относится к одному из типов данных SQL.
+
+целочисленные
+	BIGINT from -2^63 to 2^63-1
+	INT from -2^31 to 2^31-1
+	SMALLINT from -2^15 to 2^15-1
+	TINYINT from 0 to 2^8-1
+	BIT from 0 to 1
+	DECIMAL from -10^38 + 1 to 10^38 - 1
+	NUMERIC from -10^38 + 1 to 10^38 - 1
+	MONEY -(2^63 * 10^-4) to (2^63 - 1) * 10^-4
+	SMALLMONEY -(2^31 * 10^-4) to (2^31 - 1) * 10^-4
+числа с плавающией точкой
+	FLOAT from -1.79E + 308	to 1.79E + 308
+	REAL from -3.40E + 38 to 3.40E + 38
+время и дата
+	DATETIME from 1 Января, 1753 to 31 Декабря , 9999
+	SMALLDATETIME from 1 Января, 1900 to 6 Июня, 2079
+	DATE формат May 30, 2016
+	TIME формат 15:30 P.M
+символы
+	CHAR Максимальная длина – 8,000 символов. (Фиксированная длина символов, которые не входят в Unicode)
+	VARCHAR Максимальная длина – 8,000 символов. (Изменяющаяся длина данных, не входящих в Unicode).
+	VARCHAR(max) Максимальная длина – 231characters, Изменяющаяся длина данных, не входящих в Unicode (только для SQL Server 2005).
+	TEXT макс длина 2^31 - 1 Изменяющаяся длина данных, не входящих в Unicode
+символы Unicode
+	NCHAR Максимальная длина – 4,000 символов.(Фиксированная длина Unicode )
+	NVARCHAR 	Максимальная длина – 4,000 символов.(Изменяющаяся длина Unicode )
+	NVARCHAR(max) Максимальная длина – 231 символ. (Изменяющаяся длина Unicode, только для SQL Server 2005 )
+	NTEXT 	Максимальная длина 2^31 / 2 - 1 символов. (Изменяющаяся длина Unicode )
+бинарные
+	BINARY Максимальная длина – 8,000 байтов.(Фиксированная длина бинарных данных )
+	VARBINARY 	Максимальная длина – 8,000 байтов.(Изменяющаяся длина бинарных данных )
+	VARBINARY(max) 	Максимальная длина – 231 байт.(Фиксированная длина бинарных данных. Только для SQL Server 2005)
+	IMAGE Максимальная длина – 2^31 - 1 байтов. (Изменяющаяся длина бинарных данных )
+другие
+	sql_variant Хранит значения различных типов данных, поддерживаемых сервером SQL, за исключением, text, ntext и timestamp.
+	TIMESTAMP Хранит уникальное для базы данных значение, которое обновляется при каждом изменении записи.
+	uniqueidentifier Хранит глобальный уникальный идентификатор (GUID)
+	xml Хранит XML данные. Мы можем хранить экземпляр xml в колонке, либо в переменной ( Только для SQL Server 2005).
+	cursor Хранит ссылку на курсор.
+	table Хранит результирующее множество для крайней обработки.
+	gender ENUM('M','F')
+==============================================================================================================================
+SHARDING AND REPLICATION
+
+Replication (копирование) - скопировать данные из одной базы данных (MASTER) в другую (SLAVE). 
+В будущем использовать первую для изменения данных, а вторую для чтения и копирования данных из первой.
+Поддерживается на уровне СУБД.
+
+Sharding (деление на куски) - разделение базы данных на несколько кусков, каждый из которых может храниться на разных серверах.
+Вертикальный шардинг - распределение таблиц по разным серверам.
+Горизонтальный шардинг - разделение одной таблицы на две разных, размещение их на разных серверах. Например по принципу "каждая чётная запись на сервер 1, каждый нечётный на сервер 2".
+
+==============================================================================================================================
+ОПЕРАТОРЫ
+
+Арифметические операторы: + - * / %;
+Операторы сравнения: = != <> < > <= >= !< !>;
+Логические операторы: ALL AND ANY BETWEEN EXISTS IN LIKE NOT OR IS NULL UNIQUE
+
+LIKE:
+	* (1+ characters)
+	_ (1 character)
+	
+SELECT TOP col1, col1, ... colN FROM table;
+or
+SELECT SELECT col1, col1, ... colN FROM table LIMIT n;
+
+SELECT * FROM table
+ ORDER BY (CASE field 
+ WHEN 'val1' THEN 1 
+ WHEN 'val2' THEN 2 
+ WHEN 'val3' THEN 3 
+ ELSE 10 END) ASC;
+ 
+DISTINCT
+
+/** JOIN TABLES */
+SELECT col1, col2 FROM table1, table2 WHERE table1.col1 = table2.col2
+INNER JOIN (AND), LEFT OUTER JOIN (LEFT), RIGHT OUTER JOIN (RIGHT), CROSS JOIN (OR, each with each), FULL JOIN (LEFT OUTER JOIN + RIGHT OUTER JOIN), SELF JOIN (используется для объединения таблицы с ней самой)
+
+/** JOIN REQUESTS */
+UNION (OR) INTERSECT (AND), EXCEPT(LEFT NOT RIGHT)
+
+==============================================================================================================================
+INDEXES
+
+Индекс помогает ускорить запросы на получение данных (SELECT [WHERE]) , но замедляет процесс добавления и изменения записей (INSERT, UPDATE). Индексы могут быть добавлены или удалены без влияния на сами данные.
+
+Для того, чтобы добавить индекс, нам необходимо использовать команду CREATE INDEX, что позволит нам указать имя индекса и определить таблицу и колонку или индекс колонки и определить используется ли индекс по возрастанию или по убыванию.
+
+Индекса также могут быть уникальными, так же, как и констрейнт UNIQUE. В этом случае индекс предотвращает добавление повторяющихся данных в колонку или комбинацию колонок, на которые указывает индекс.
+
+CREATE INDEX имя_индекса ON имя_таблицы (имя_колонки);
+CREATE INDEX имя_индекса ON имя_таблицы (колонка1, колонка2);
+Выбор типа индекса (одноколоночный или многоколоночный) зависит от того, что именно мы чаще всего будем использовать в нашем условном операторе WHERE.
+
+DROP INDEX имя_индекса;
+
+A database index is a data structure that improves the speed of data retrieval operations on a database table at the cost of additional writes and storage space to maintain the index data structure. Indexes are used to quickly locate data without having to search every row in a database table every time a database table is accessed. Indexes can be created using one or more columns of a database table, providing the basis for both rapid random lookups and efficient access of ordered records.
+An index is a copy of selected columns of data from a table that can be searched very efficiently that also includes a low-level disk block address or direct link to the complete row of data it was copied from. Some databases extend the power of indexing by letting developers create indexes on functions or expressions. For example, an index could be created on upper(last_name), which would only store the upper-case versions of the last_name field in the index. Another option sometimes supported is the use of partial indices, where index entries are created only for those records that satisfy some conditional expression. A further aspect of flexibility is to permit indexing on user-defined functions, as well as expressions formed from an assortment of built-in functions.
+Usage
+	Support for fast lookup
+		Most database software includes indexing technology that enables sub-linear time lookup to improve performance, as linear search is inefficient for large databases.
+		Suppose a database contains N data items and one must be retrieved based on the value of one of the fields. A simple implementation retrieves and examines each item according to the test. If there is only one matching item, this can stop when it finds that single item, but if there are multiple matches, it must test everything. This means that the number of operations in the worst case is O(N) or linear time. Since databases may contain many objects, and since lookup is a common operation, it is often desirable to improve performance.
+		An index is any data structure that improves the performance of lookup. There are many different data structures used for this purpose. There are complex design trade-offs involving lookup performance, index size, and index-update performance. Many index designs exhibit logarithmic (O(log(N))) lookup performance and in some applications it is possible to achieve flat (O(1)) performance.
+	Policing the database constraints
+		Indexes are used to police database constraints, such as UNIQUE, EXCLUSION, PRIMARY KEY and FOREIGN KEY. An index may be declared as UNIQUE, which creates an implicit constraint on the underlying table. Database systems usually implicitly create an index on a set of columns declared PRIMARY KEY, and some are capable of using an already-existing index to police this constraint. Many database systems require that both referencing and referenced sets of columns in a FOREIGN KEY constraint are indexed, thus improving performance of inserts, updates and deletes to the tables participating in the constraint.
+		Some database systems support an EXCLUSION constraint that ensures that, for a newly inserted or updated record, a certain predicate holds for no other record. This can be used to implement a UNIQUE constraint (with equality predicate) or more complex constraints, like ensuring that no overlapping time ranges or no intersecting geometry objects would be stored in the table. An index supporting fast searching for records satisfying the predicate is required to police such a constraint.[1]
+Index architecture/Indexing Methods
+	Non-clustered
+		The data is present in arbitrary order, but the logical ordering is specified by the index. The data rows may be spread throughout the table regardless of the value of the indexed column or expression. The non-clustered index tree contains the index keys in sorted order, with the leaf level of the index containing the pointer to the record (page and the row number in the data page in page-organized engines; row offset in file-organized engines).
+		In a non-clustered index,
+		The physical order of the rows is not the same as the index order.
+		The indexed columns are typically non-primary key columns used in JOIN, WHERE, and ORDER BY clauses.
+		There can be more than one non-clustered index on a database table.
+	Clustered
+		Clustering alters the data block into a certain distinct order to match the index, resulting in the row data being stored in order. Therefore, only one clustered index can be created on a given database table. Clustered indices can greatly increase overall speed of retrieval, but usually only where the data is accessed sequentially in the same or reverse order of the clustered index, or when a range of items is selected.
+		Since the physical records are in this sort order on disk, the next row item in the sequence is immediately before or after the last one, and so fewer data block reads are required. The primary feature of a clustered index is therefore the ordering of the physical data rows in accordance with the index blocks that point to them. Some databases separate the data and index blocks into separate files, others put two completely different data blocks within the same physical file(s).
+	Cluster
+		When multiple databases and multiple tables are joined, it's referred to as a cluster (not to be confused with clustered index described above). The records for the tables sharing the value of a cluster key shall be stored together in the same or nearby data blocks. This may improve the joins of these tables on the cluster key, since the matching records are stored together and less I/O is required to locate them.[2] The cluster configuration defines the data layout in the tables that are parts of the cluster. A cluster can be keyed with a B-Tree index or a hash table. The data block where the table record is stored is defined by the value of the cluster key.
+
+Applications and limitations
+	Indexes are useful for many applications but come with some limitations. Consider the following SQL statement: SELECT first_name FROM people WHERE last_name = 'Smith';. To process this statement without an index the database software must look at the last_name column on every row in the table (this is known as a full table scan). With an index the database simply follows the B-tree data structure until the Smith entry has been found; this is much less computationally expensive than a full table scan.
+	Consider this SQL statement: SELECT email_address FROM customers WHERE email_address LIKE '%@wikipedia.org';. This query would yield an email address for every customer whose email address ends with "@wikipedia.org", but even if the email_address column has been indexed the database must perform a full index scan. This is because the index is built with the assumption that words go from left to right. With a wildcard at the beginning of the search-term, the database software is unable to use the underlying B-tree data structure (in other words, the WHERE-clause is not sargable). This problem can be solved through the addition of another index created on reverse(email_address) and a SQL query like this: SELECT email_address FROM customers WHERE reverse(email_address) LIKE reverse('%@wikipedia.org');. This puts the wild-card at the right-most part of the query (now gro.aidepikiw@%), which the index on reverse(email_address) can satisfy.
+	When the wildcard characters are used on both sides of the search word as %wikipedia.org%, the index available on this field is not used. Rather only a sequential search is performed, which takes O(N) time.
+
+TYPES OF INDEXES
+	Bitmap index
+		Main article: Bitmap index
+		A bitmap index is a special kind of indexing that stores the bulk of its data as bit arrays (bitmaps) and answers most queries by performing bitwise logical operations on these bitmaps. The most commonly used indexes, such as B+ trees, are most efficient if the values they index do not repeat or repeat a small number of times. In contrast, the bitmap index is designed for cases where the values of a variable repeat very frequently. For example, the sex field in a customer database usually contains at most three distinct values: male, female or unknown (not recorded). For such variables, the bitmap index can have a significant performance advantage over the commonly used trees.
+	Dense index
+		A dense index in databases is a file with pairs of keys and pointers for every record in the data file. Every key in this file is associated with a particular pointer to a record in the sorted data file. In clustered indices with duplicate keys, the dense index points to the first record with that key.[3]
+	Sparse index
+		A sparse index in databases is a file with pairs of keys and pointers for every block in the data file. Every key in this file is associated with a particular pointer to the block in the sorted data file. In clustered indices with duplicate keys, the sparse index points to the lowest search key in each block.
+	Reverse index
+		Main article: Reverse index
+		A reverse-key index reverses the key value before entering it in the index. E.g., the value 24538 becomes 83542 in the index. Reversing the key value is particularly useful for indexing data such as sequence numbers, where new key values monotonically increase.
+
+Index implementations
+	Indices can be implemented using a variety of data structures. Popular indices include balanced trees, B+ trees and hashes.[4]
+	In Microsoft SQL Server, the leaf node of the clustered index corresponds to the actual data, not simply a pointer to data that resides elsewhere, as is the case with a non-clustered index.[5] Each relation can have a single clustered index and many unclustered indices.[6]
+
+	Index concurrency control
+		Main article: Index locking
+		An index is typically being accessed concurrently by several transactions and processes, and thus needs concurrency control. While in principle indexes can utilize the common database concurrency control methods, specialized concurrency control methods for indexes exist, which are applied in conjunction with the common methods for a substantial performance gain.
+
+Covering index
+	In most cases, an index is used to quickly locate the data record(s) from which the required data is read. In other words, the index is only used to locate data records in the table and not to return data.
+	A covering index is a special case where the index itself contains the required data field(s) and can answer the required data.
+	Consider the following table (other fields omitted):
+
+	ID	Name	Other Fields
+	12	Plug	...
+	13	Lamp	...
+	14	Fuse	...
+	To find the Name for ID 13, an index on (ID) is useful, but the record must still be read to get the Name. However, an index on (ID, Name) contains the required data field and eliminates the need to look up the record.
+	Covering indexes are each for a specific table. Queries which JOIN/ access across multiple tables, may potentially consider covering indexes on more than one of these tables.[7]
+	A covering index can dramatically speed up data retrieval but may itself be large due to the additional keys, which slow down data insertion & update. To reduce such index size, some systems allow including non-key fields in the index. Non-key fields are not themselves part of the index ordering but only included at the leaf level, allowing for a covering index with less overall index size.
+		
+Индексы используются для увеличения производительности БД, но есть случаи, когда нам стоит избегать их использования:
+
+Не стоит использовать индексы для небольших таблиц.
+Не стоит использовать индексы для таблиц, в которых, как предполагается, будут часто добавляться новые данные, либо эти данные будут изменяться.
+Не стоит использовать индекс для колонок, с которыми будут производиться частые манипуляции.
+Не стоит использовать индексы для колонок, которые имеют много значений NULL.
+
+Indexing is defined based on its indexing attributes. Indexing can be of the following types −
+Primary Index − Primary index is defined on an ordered data file. The data file is ordered on a key field. The key field is generally the primary key of the relation.
+Secondary Index − Secondary index may be generated from a field which is a candidate key and has a unique value in every record, or a non-key with duplicate values.
+Clustering Index − Clustering index is defined on an ordered data file. The data file is ordered on a non-key field.
+
+Ordered Indexing is of two types:
+	Dense Index (плотный индекс)
+		In dense index, there is an index record for every search key value in the database. 
+		This makes searching faster but requires more space to store index records itself. 
+		Index records contain search key value and a pointer to the actual record on the disk.
+	Sparse Index (разряжённый индекс)
+		In sparse index, index records are not created for every search key. An index record here contains a search key and an actual pointer to the data on the disk. 
+		To search a record, we first proceed by index record and reach at the actual location of the data. 
+		If the data we are looking for is not where we directly reach by following the index, then the system starts sequential search until the desired data is found.
+	Multilevel Index
+		Index records comprise search-key values and data pointers. Multilevel index is stored on the disk along with the actual database files. As the size of the database grows, so does the size of the indices. 
+		There is an immense need to keep the index records in the main memory so as to speed up the search operations. 
+		If single-level index is used, then a large size index cannot be kept in memory which leads to multiple disk accesses.
+		Multi-level Index helps in breaking down the index into several smaller indices in order to make the outermost level so small that it can be saved in a single disk block, 
+		which can easily be accommodated anywhere in the main memory.
+	B+ Tree
+		A B+ tree is a balanced binary search tree that follows a multi-level index format. The leaf nodes of a B+ tree denote actual data pointers. B+ tree ensures that all leaf nodes remain 
+		at the same height, thus balanced. Additionally, the leaf nodes are linked using a link list; therefore, a B+ tree can support random access as well as sequential access.
+		A BALANCED TREE + LINKED LIST
+		Structure of B+ Tree:
+			Internal nodes
+				Internal (non-leaf) nodes contain at least n/2 pointers, except the root node.
+				At most, an internal node can contain n pointers.
+			Leaf nodes
+				Leaf nodes contain at least ⌈n/2⌉ record pointers and n/2 key values.
+				At most, a leaf node can contain n record pointers and n key values.
+				Every leaf node contains one block pointer P to point to next leaf node and forms a linked list.
+		
+Структура индексов - это сбалансированное дерево, в листьях которого находятся либо сами строки таблицы (кластеризованный индекс), либо указатели на строки в таблице (некластеризованный индекс).
+
+Кластеризованный индекс. Реальная отсортированная таблица.
+	Хранит реальные строки таблицы  в листьях индекса. Все данные отсортированы. Таблица может иметь только одни кластеризованный индекс.
+	Данные в таблице хранятся в отсортированном виде только в случае, если создан кластеризованный индекс у этой таблицы.
+	Таблица не имеющая кластеризованного индекса называется кучей.
+	
+Некластеризованный индекс. Куча со ссылками на реальные данные.
+	В отличие от кластеризованного индекса, листья некластеризованного индекса содержат только те столбцы (ключевые), по которым определен данный индекс, 
+	а также содержит указатель на строки с реальными данными в таблице. Это означает, что системе подзапросов необходима дополнительная операция для обнаружения и получения требуемых данных.
+	Содержание указателя на данные зависит от способа хранения данных: кластеризованная таблица или куча.
+	Если указатель ссылается на кластеризованную таблицу, то он ведет к кластеризованному индексу, используя который можно найти реальные данные.
+	Если указатель ссылается на кучу, то он ведет к конкретному идентификатору строки с данными.
+	Некластеризованные индексы не могут быть отсортированы. Вы можете создать от 1 некластеризованного индекса до 999.
+	Вы можете также включить дополнительные столбцы (included column) в свой индекс: на листьях индекса будет храниться не только значение самих индексированных столбцов, но и значения этих не индексированных дополнительных столбцов.
+	Этот подход позволит вам обойти некоторые ограничения, наложенные на индекс. К примеру, вы можете включить неидексируемый столбец или обойти ограничение на длину индекса (900 байт в большинстве случаев).
+
+Типы индексов:
+	1) Составной индекс
+		Может содержать от 1 до 16 столбцов или до 900 байт. Как кластеризованный, так и некластеризованный индексы могут быть составными.
+	2) Уникальный индекс
+		Такой индекс обеспечивает уникальность каждого значения в индексируемом столбце. Есть составной, то уникальность идёт на комбинацию из столбцов.
+		Уникальный индекс автоматически создается когда вы определяете ограничения столбца: первичный ключ или ограничение на уникальность значений:
+			Первичный ключ.
+				Когда вы определяете ограничение первичного ключа на один или несколько столбцов, тогда SQL Server автоматически создаёт уникальный кластеризованный индекс, 
+				если кластеризованный индекс не был создан ранее (в этом случае создается уникальный некластеризованный индекс по первичному ключу)
+			Уникальность значений.
+				Когда вы определяете ограничение на уникальность значений, тогда SQL Server автоматически создает уникальный некластеризованный индекс. 
+				Вы можете указать, чтобы был создан уникальный кластеризованный индекс, если кластеризованного индекса до сих пор не было создано на таблице
+	3) Покрывающий индекс
+		Такой индекс позволяет конкретному запросу сразу получить все необходимые данные с листьев индекса без дополнительных обращений к записям самой таблицы.
+
+Проектирование индексов
+	Насколько полезны индексы могут быть, настолько аккуратно они должны быть спроектированы. Поскольку индексы могут занимать значительное дисковое пространство, 
+	вы не захотите создавать индексов больше, чем необходимо. В дополнение, индексы автоматически обновляются когда сама строка с данными обновляется, 
+	что может привести к дополнительным накладным расходам ресурсов и падению производительности. 
+	При проектирование индексов должно приниматься во внимание несколько соображений относительно базы данных и запросов к ней.
+	
+Советы по использованию индексов
+	Для таблиц которые часто обновляются используйте как можно меньше индексов.
+	Если таблица содержит большое количество данных, но их изменения незначительны, тогда используйте столько индексов, сколько необходимо для улучшение производительности ваших запросов. 
+		Однако хорошо подумайте перед использованием индексов на небольших таблицах, т.к. возможно использование поиска по индексу может занять больше времени, нежели простое сканирование всех строк.
+	Для кластеризованных индексов старайтесь использовать настолько короткие поля насколько это возможно. 
+		Наилучшим образом будет применение кластеризованного индекса на столбцах с уникальными значениями и не позволяющими использовать NULL. Вот почему первичный ключ часто используется как кластеризованный индекс.
+	Уникальность значений в столбце влияет на производительность индекса. В общем случае, чем больше у вас дубликатов в столбце, тем хуже работает индекс. 
+		С другой стороны, чем больше уникальных значения, тем выше работоспособность индекса. Когда возможно используйте уникальный индекс.
+	Для составного индекса возьмите во внимание порядок столбцов в индексе. Столбцы, которые используются в выражениях WHERE (к примеру, WHERE FirstName = 'Charlie') должны быть в индексе первыми. 
+		Последующие столбцы должны быть перечислены с учетом уникальности их значений (столбцы с самым высоким количеством уникальных значений идут первыми).
+	Также можно указать индекс на вычисляемых столбцах, если они соответствуют некоторым требованиям. К примеру, выражение которые используются для получения значения столбца, 
+		должны быть детерминистическими (всегда возвращать один и тот же результат для заданного набора входных параметров).
+
+Запросы к базе данных
+	Другое соображение которое следует учитывать при проектировании индексов это какие запросы выполняются к базе данных. Как было указано ранее, вы должны учитывать как часто изменяются данные. Дополнительно следует использовать следующие принципы:
+	Старайтесь вставлять или модифицировать в одном запросе как можно больше строк, а не делать это в несколько одиночных запросов.
+	Создайте некластеризованный индекс на столбцах которые часто используются в ваших запросах в качестве условий поиска в WHERE и соединения в JOIN.
+	Рассмотрите возможность индексирования столбцов, использующихся в запросах поиска строк на точное соответствие значений.
+	
+Почему таблица не может иметь два кластеризованных индекса?
+	Кластеризованный индекс – это и есть таблица. Кластеризованный индекс это не отдельная сущность как другие индексы, а механизм сортировки данных в таблице и облегчения быстрого доступа к строкам с данными.
+Если кластеризованная таблица даёт множество преимуществ, то зачем использовать кучу?
+	Всё это означает, что вы должны рассматривать возможность использования кучи только когда работаете с особо-маленькими таблицами или всё ваше взаимодействие с таблицей ограничено вставкой данных и ваши запросы чрезвычайно просты (и вы все-равно используете некластеризованные индексы). В противном случае держитесь хорошо спроектированного кластеризованного индекса, к примеру определенного на простом возрастающем ключевом поле, как широко применяемый столбец с IDENTITY.
+Можно ли создать кластеризованный индекс на столбце, содержащем дубликаты?
+	Да вы можете создать кластеризованный индекс на ключевом столбце, содержащем дубликаты значений. 
+	Нет, значение ключевого столбца не смогут остаться в состоянии не уникальности.
+	Подсистема хранения данных будет добавлять к неуникальному значению что-то, чтобы оно стало уникальным, поэтому лучше, чтобы была задана изначально с наименьшим размером значения (1 2 3 ...)
+Как хранится таблица, если не был создан кластеризованный индекс?
+	SQL Server поддерживает два типа таблиц: кластеризованные таблицы (balanced tree?), имеющие кластеризованный индекс и таблицы-кучи или просто кучи. 
+	В отличие от кластеризованных таблиц данные в куче не сортированы никоим образом.
+Какая взаимосвязь между ограничениями на уникальность значения и первичным ключом с индексами таблицы?
+	PRIMARY KEY. Единственный, not null.
+		Когда вы создаете первичный ключ, подсистема хранения данных так же создает уникальный кластеризованный индекс, в случае если уже кластеризованный индекс не был создан
+		Если кластеризованный индекс существует когда вы создаёте первичный ключ, то будет создан уникальный некластеризованный индекс.
+		Однако, вы можете переопределить установленное по умолчанию поведение и тогда будет создан некластеризованный индекс. Если кластеризованный индекс существует когда вы создаёте первичный ключ, то будет создан уникальный некластеризованный индекс.
+	UNIQUE. Может быть несколько, может иметь один null
+		Когда вы создаете ограничение на уникальность, подсистема хранения данных создает уникальный некластеризованный индекс.
+		Но вы можете указать создание уникального кластеризованного индекса, если он не был создан ранее.
+	В общем случае, ограничение на уникальность значение и уникальный индекс это одно и то же.
+
+============================================================================================
+KEYS
+
+FOREIGN KEY
+ON UPDATE / ON DELETE
+CASCADE: если связанная запись родительской таблицы обновлена или удалена, и мы хотим чтобы соответствующие записи в таблицах-потомках также были обновлены или удалены. Что происходит с записью в родительской таблице, тоже самое произойдет с записью в дочерних таблицах. Однако не забывайте, что здесь можно легко попасться в ловушку бесконечного цикла.
+SET NULL:если запись в родительской таблице обновлена или удалена, а мы хоти чтобы в дочерней таблице некоторым занчениям было присвоено NULL (конечно если поле таблицы это позволяет)
+NO ACTION: смотри RESTRICT
+RESTRICT:если связанные записи родительской таблицы обновляются или удаляются со значениями которые уже/еще содержатся в соответствующих записях дочерней таблицы, то база данных не позволит изменять записи в родительской таблице. Обе команды NO ACTION и RESTRICT эквивалентны отсутствию
+подвыражений ON UPDATE or ON DELETE для внешних ключей.
+SET DEFAULT:На данный момент эта команда распознается парсером, но движок InnoDB никак на нее не реагирует.
+
+CREATE TABLE invoice (
+        id  INT AUTO_INCREMENT NOT NULL,			// AUTO_INCREMENT сам выставляет значения 1,2,3 ... n
+        usr_id  INT NOT NULL,
+        prod_id  INT NOT NULL,
+        quantity INT NOT NULL,
+        PRIMARY KEY(inv_id),
+        FOREIGN KEY (usr_id) REFERENCES usr(usr_id)
+          ON UPDATE CASCADE
+          ON DELETE RESTRICT,
+        FOREIGN KEY (prod_id) REFERENCES product(prod_id)
+          ON UPDATE CASCADE
+          ON DELETE RESTRICT
+      ) ENGINE=InnoDB CHARACTER SET=UTF8;
+		
+==============================================================================================================================
+VIEWS (именованые SQL запросы)
+
+Представление (VIEW) — объект базы данных, являющийся результатом выполнения запроса к базе данных, определенного с помощью оператора SELECT, в момент обращения к представлению.
+	Виды позволяют нам:
+	-Структурировать данные наиболее удобным способом.
+	-Ограничить доступ к данным, которые может видеть пользователь.
+	-Собирать данные из нескольких таблиц, которые могут быть использованы для генерирования отчётов.
+	
+Вид (View) – это SQL запрос, который хранится в базе данных (далее – БД) с определённым именем. Это таблица, которая хранится в форме предопределённого SQL запроса.
+
+CREATE VIEW view_name AS request (for example SELECT * FROM table_name;)
+SELECT * FROM view_name;
+
+DROP VIEW view_name;
+
+/** IF CONDITION FALSE THEN EXCEPTION */
+CREATE VIEW developers_view_with_check_option AS 
+SELECT NAME, SPECIALTY 
+FROM developers 
+WHERE SPECIALTY IS NOT NULL 
+WITH CHECK OPTION;
+
+/** UPDATE VIEW */
+UPDATE developers_view SET SPECIALTY = 'C++' WHERE NAME = 'Andrei Komarov';
+
+/** INSERT RECORDS INTO VIEW */
+INSERT INTO developers_view VALUES ('Kolya Nikolaev', 'C#');
+
+/** DELETE RECORDS FROM VIEW */
+DELETE FROM developers_view WHERE NAME = 'Kolya Nikolaev';
+
+============================================================================
+EXPLAIN (ПЛАН)
+
+EXPLAIN SELECT * FROM table_name;
+
+Type — указывает на то, как MySQL связывает используемые таблицы. Это одно из наиболее полезных полей в выводе потому, что может сообщать об отсутствующих индексах или почему написанный запрос должен быть пересмотрен и переписан. 
+	Возможные значения:
+	System – таблица имеет только одну строку
+	Const – таблица имеет только одну соответствующую строку, которая проиндексирована. Это наиболее быстрый тип соединения потому, что таблица читается только один раз и значение строки может восприниматься при дальнейших соединениях как константа.
+	Eq_ref – все части индекса используются для связывания. Используемые индексы: PRIMARY KEY или UNIQUE NOT NULL. Это еще один наилучший возможный тип связывания.
+	Ref – все соответствующие строки индексного столбца считываются для каждой комбинации строк из предыдущей таблицы. Этот тип соединения для индексированных столбцов выглядит как использование операторов = или < = >
+	Fulltext – соединение использует полнотекстовый индекс таблицы
+	Ref_or_null – то же самое, что и ref, но также содержит строки со значением null для столбца
+	Index_merge – соединение использует список индексов для получения результирующего набора. Столбец key вывода команды EXPLAIN будет содержать список использованных индексов.
+	Unique_subquery – подзапрос IN возвращает только один результат из таблицы и использует первичный ключ.
+	Index_subquery – тоже, что и предыдущий, но возвращает более одного результата.
+	Range – индекс, использованный для нахождения соответствующей строки в определенном диапазоне, обычно, когда ключевой столбец сравнивается с константой, используя операторы вроде: BETWEEN, IN, >, >=, etc.
+	Index – сканируется все дерево индексов для нахождения соответствующих строк.
+	All – Для нахождения соответствующих строк используются сканирование всей таблицы. Это наихудший тип соединения и обычно указывает на отсутствие подходящих индексов в таблице.
+Possible_keys – показывает индексы, которые могут быть использованы для нахождения строк в таблице. Значение NULL указывает на то, что не найдено ни одного подходящего индекса (можно оптимизировать).
+Rows – отображает число записей, обработанных для получения выходных данных.
+
+EXPLAIN EXTENDED SELECT * FROM table_name;
+SHOW WARNINGS;
+
+=================
+DATE FUNCTIONS
+
+Example: SELECT CURDATE();
+
+ADDDATE()	Добавляет дату
+ADDTIME()	Добавляет время
+CONVERT_TZ()	Конвертирует одну временную зону в другую.
+CURDATE()	Возвращает текущую дату.
+CURRENT_DATE(), CURRENT_DATE	Тоже самое, что и CURDATE.
+CURTIME()	Возвращает текущее время
+NOW()	Возвращает текущие дату и время.
+CURRENT_TIME(), CURRENT_TIME	Тоже самое, что и NOW()
+DATE_ADD()	Добавляет две даты
+DATE_FORMAT()	Определяет формат даты
+DATE_SUB()	Разбивает две даты
+DATE()	Возвращает только дату (число, месяц, год) из даты.
+DATEDIFF()	Разделяет две даты
+DAY()	Тоже самое, что и DAYOFMONTH()
+DAYNAME()	Возвращает имя дня недели.
+DAYOFMONTH()	Возвращает день месяца
+DAYOFWEEK()	Возвращает индекс аргумента дня недели
+DAYOFYEAR()	Возвращает номер дня в году (1 – 366)
+EXTRACT	Выдаёт часть даты
+FROM_DAYS()	Конвертирует номер дня в дату.
+FROM_UNIXTIME()	Форматирует дату в дата/время для UNIX систем.
+HOUR()	Возвращает часы
+LAST_DAY	Возвраащет крайний день месяца.
+LOCALTIME(), LOCALTIME	Тоже самое, что и NOW()
+LOCALTIMESTAMP, LOCALTIMESTAMP()	Тоже самое, что и NOW()
+MAKEDATE()	Создаёт дату из года и дня в году
+MAKETIME	Создаёт время
+MICROSECOND()	Возвращает мискросекунды
+MINUTE()	Возвращает только минуты
+MONTH()	Возвращает только месяц
+MONTHNAME()	Возвращает имя месяца
+CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP	Синоним для NOW()
+PERIOD_ADD()	Добавляет период для в месяце-году.
+PERIOD_DIFF()	Возвращает количество месяцев в периоде.
+QUARTER()	Возвращает квартал
+SEC_TO_TIME()	Конвертирует секунды в формат ‘ЧЧ:ММ:СС’
+SECOND()	Возвращает секунды (0 – 59)
+STR_TO_DATE()	Конвертирует строку в дату
+SUBDATE()	Тоже самое, что и DATE_SUB() Требует три аргумента
+SUBTIME()	Разделяет время
+SYSDATE()	Возвращает системное время
+TIME_FORMAT()	Определяет формат времени
+TIME_TO_SEC()	Конвертирует время в секунды
+TIME()	Возвращает время.
+TIMEDIFF()	Отделяет время
+TIMESTAMP()	Возвращает текущие дату и время.
+TIMESTAMPADD()	Добавляет период дата/время
+IMESTAMPDIFF()	Отделяет интервал из дата/время
+TO_DAYS()	Конвертирует дату в дни
+UNIX_TIMESTAMP()	Возвращает дату/время для UNIX систем
+UTC_DATE()	Возвращает дату UTC
+UTC_TIME()	Возвращает время UTC
+UTC_TIMESTAMP()	Возвращает дату/время UTC
+WEEK()	Возвращает номер недели
+WEEKDAY()	Возвращает индекс дня недели
+WEEKOFYEAR()	Возвращает номер недели в году (1 – 53)
+YEAR()	Возвращает год
+YEARWEEK()	Возвращает год и неделю
+
+
+Arguments:
+MICROSECOND	Микросекунды
+SECOND	Секунды
+MINUTE	Минуты
+HOUR	Часы
+DAY	Дни
+WEEK	Недели
+MONTH	Месяцы
+QUARTER	Кварталы
+YEAR	Годы
+SECOND_MICROSECOND	‘Секунды.Микросекунды’
+MINUTE_MICROSECOND	Минуты.Микросекунды’
+MINUTE_SECOND	‘Минуты.Секунды’
+HOUR_MICROSECOND	‘Часы.Микросекунды’
+HOUR_SECOND	‘Часы.Секунды.Микросекунды’
+HOUR_MINUTE	‘Часы.Минуты’
+DAY_MICROSECOND	‘Дни.Микросекунды’
+DAY_SECOND	Дни.Часы.Минуты.Секунды
+DAY_MINUTE	Дни.Часы.Минуты
+DAY_HOUR	Дни.Часы
+YEAR_MONTH	Года.Месяцы
+
+SELECT DATE_ADD('2016-06-04 20:00:00', INTERVAL '1:1' DAY_HOUR);
+
+Formats:
+%a	Сокращённое имя дня недели
+%b	Сокращённое имя месяца
+%c	Номер месяца
+%D	День месяца с английским суффиксом
+%d	Номер дня в месяце (00 … 31)
+%e	Номер дня в месяце (0 … 31)
+%f	Микросекунды ( 000000 … 999999)
+%H	Часы (00 … 23)
+%h	Часы (01 … 12)
+%I	Часы (01 … 12)
+%i	Минуты (00 … 59)
+%j	Дни года (001 … 366)
+%k	Часы (00 … 23)
+%l	Часы (1 … 12)
+%M	Имя месяца
+%m	Номер месяца
+%p	AM или PM
+%r	Времяс испоьзованием AM или PM
+%S	Секунды (00 … 59)
+%s	Секунды (00 … 59)
+%T	Время (ЧЧ:ММ:СС)
+%U	Неделя (00 … 53). Первый день недели – Воскресенье
+%u	Неделя (00 … 53). Первый день недели – Понедельник
+%V	Неделя (00 … 53). Первый день недели – Воскресенье. Используется с %X
+%v	Неделя (00 … 53). Первый день недели – Понедельник. Используется с %x
+%W	День недели
+%w	День недели (0 – Воскресенье … 6 – Суббота)
+%X	Год для недели. Воскресенье – первый день недели. Используется с %V
+%x	Год для недели. Понедельник – первый день недели. Используется с %v
+%Y	Год  (YYYY)
+%y	Год (YY)
+%%	Символ .%.
+%x	х для любых элементов, указанных выше
+
+SELECT DATE_ADD('2016-06-04 20:00:00', %W %M %Y');
+
+SELECT DAYNAME('2016-06-01');
+
+==============================================================================================================================
+TEMPORARY TABLES
+
+CREATE TEMPORARY TABLE SALES_TICKET_SUMMARY (
+          PRODUCT_NAME VARCHAR (100) NOT NULL, 
+          PRODUCT_PRICE INT NOT NULL, 
+          PRODUCT_AMOUNT INT NOT NULL DEFAULT 1
+        );
+INSERT INTO SALES_TICKET_SUMMARY VALUES ('Milk', 10, 2);
+DROP  TABLE SALES_TICKET_SUMMARY;
+
+==============================================================================================================================
+ТРАНЗАКЦИИ
+
+Atomicity (транзакция фиксируется либо целиком, либо никак)
+Consistency БД после выполнения операции должна быть в согласованном состоятии.
+	Атомарность нескольких транзакций.
+	Это означает, что любая завершённая транзакция (транзакция, которая достигла завершения транзакции – end of transaction) фиксирует только допустимые результаты. Например, при переводе денег с одного счёта на другой, в случае, если деньги ушли с одного счёта, они должны прийти на другой (это и есть согласованность системы). Списание и зачисление  – это две разные транзакции, поэтому первая транзакция пройдёт без ошибок, а второй просто не будет. Именно поэтому крайне важно учитывать это свойство и поддерживать баланс системы.
+	Согласованность любые изменения должны быть согласованы со всеми ограничениями на уровне БД и таблиц
+Isolation несколько видов изоляции транзакции от других.
+Durability Если при выполнении транзакции произойдёт разрыв связи, 
+	то при восстановлении этой связи эта транзакция будет корректно обработана каким-либо образом (чтение оборванное операции ведётся из лога на сервере).
+	Эта концепция гарантирует, что если мы получили подтверждение о выполнении транзакции, то изменения, вызванные этой транзакцией не должны быть отменены из-за сбоя системы (например, отключение электропитания).
+	(Атомарность транзакции и внешних факторов?)
+	Долговечность	при подтверждении тр-ции, изменения, вызванные этой тр-цией не должны быть отменены из-за сбоя системы
+Проблемы при параллельных обращениях:
+- Lost update Два потока A и B обращаются к переменной С, читают её значение, дописывают CA' и CB' (CA' раньше CB'), коммитятся. Результат CB'. Должен быть CA'B'
+	(две сессии читают одну и ту же переменную, изменяют её, коммитят. Результом будет более поздний коммит)
+- Dirty read Два потока A и B обращаются к переменной С, А читает С и дописывает CA', B читает СA', A rollback, B дописывает CA'B' и commit. Результат CA'B'. Должен быть CB'
+	Поток может увидеть незакомиченное изменённое значение другим потоком.
+	(Одна сессия прочитала значение, которое чуть позже было rollbacked другой)
+- Non-repeatable read Поток А и B читают С, А дописывает СA', А commit, B читает CA' 
+	B при первом и втором чтении получает разные результаты (видит обновлённую запись).
+	(С изменённым полем)
+- Phantom read Поток А и B читают С, А дописывает новое поле С + A', А commit, B читает C + A'
+	B при первом и втором чтении получает разные результаты (видит новую запись).
+	(С добавленным полем)
+
+Isolation levels (+ проблема решена, - не решена):
+				Phantom read	Non-Repeatable read		Dirty read		Lost update
+				
+Serializable		+					+					+				+
+
+Repeatable read		-					+					+				+			~ == Serializable in MySQL
+
+Read commited		-					-					+				+
+(default)
+
+Read uncommited		-					-					-				+
+
+В случае полного изменения данных нужны блокировки, как в Java.
+Optimistic locking Добавляет какое-либо поле-счётчик, например version, считывает его значение, делает необходимые изменения в БД,
+	считывает значение ещё раз. Если они одинаковые, то изменения принимаются, если нет, то нет.
+
+Pessimistic locking полные блокировки
+Pessimistic write (exclusive lock) SELECT ... FOR UPDATE
+Pessimistic read (shared lock)	SELECT ... LOCK IN SHARE MODE
+
+LOCK TABLES table1 READ, table2 WRITE; 
+Оператор UNLOCK TABLES не имеет аргументов и снимает все блокировки
+
+USE newschema;
+START TRANSACTION;
+SET autocommit = 0;
+SELECT * FROM newtable FOR UPDATE; #blocking all other sessions trying to get access to the fields if they use LOCK IN SHARE MODE or update the fields from this moment
+UPDATE newtable SET field2 = 'somevalue' WHERE field = 9;
+ROLLBACK; #or COMMIT; the commands unlock the fields for other sessions
+
+MYSQL in CMD:
+cd mysqlServer/bin
+mysql -u root -p
+
+Транзакции CRUD только с записями в таблицы, но не с самой таблицей.
+Внутри таблицы работают транзакии, с самой таблицей работают блокировки.
+
+BEGIN
+COMMIT
+ROLLBACK
+
+SAVEPOINT savepoint_name;
+ROLLBACK TO savepoint_name;
+RELEASE SAVEPOINT SP1; //delete
+
+SET TRANSACTION READ ONLY;
+SET TRANSACTION READ WRITE;
+
+==============================================================================================================================
+mysqldump -u root -p newschema > mydump.sql (MAKE DUMP)
+mysqldump -u root -p newnewschema < mydump.sql (RESTORE FROM DUMP)
+
+DROP SCHEMA IF EXISTS newschema;
+CREATE SCHEMA IF NOT EXISTS newschema;
+USE newschema;
+
+DROP TABLE IF EXISTS newtable;
+
+CREATE TABLE IF NOT EXISTS newtable(
+	id INT AUTO_INCREMENT NOT NULL,
+    field VARCHAR(100) NULL,
+    PRIMARY KEY (id)
+);
+
+ALTER TABLE newtable
+	DROP COLUMN field,
+    ADD COLUMN f VARCHAR(100) NULL;
+
+INSERT INTO newtable (f) VALUES ('a'), ('b');
+
+UPDATE newtable SET f = 'c' WHERE id = 2;
+
+DELETE FROM newtable WHERE id = 1;
+
+SELECT * FROM newtable;
+
+==============================================================================================================================
+SHOW DATABASES;
+SHOW SCHEMAS;
+SHOW TABLES;
+SHOW COLUMNS FROM newtable;
+	or DESC newtable;
+SHOW INDEX FROM newtable;
+SHOW CREATE TABLE newtable;
+SELECT CURRENT_TIMESTAMP;
+TRUNCATE TABLE  table_name;
+DELIMITER // - change delimiter from ; to //
+
+/** EXPORT DB */
+SELECT * FROM tutorials_tbl INTO OUTFILE '/tmp/tutorials.txt';
+   
+/** IMPORT DB */
+LOAD DATA LOCAL INFILE 'dump.txt' INTO TABLE mytbl;
+or
+$ mysqlimport -u root -p --local database_name dump.txt
+password *****
+
+SELECT DISTINCT column, SUM(columnB) FROM table
+
+UNION / UNION ALL / INTERSECT / EXCEPT
+
+SELECT * from tableZ
+
+WHERE a > (SELECT AVG(b) FROM table2)   [WHERE a IN/NOT IN (SELECT c FROM table3)]
+ORDER BY table.a ASC
+LIMIT 10;
+
+SELECT DISTINCT column, AGG_FUNC(column_or_expression)
+FROM mytable
+    JOIN another_table ON (mytable.column = another_table.column)    (LEFT OUTER /RIGHT OUTER /INNER /CROSS JOIN)
+    WHERE constraint_expression
+    GROUP BY column
+    HAVING constraint_expression
+    ORDER BY column ASC/DESC
+    LIMIT count OFFSET COUNT;
+	
+INSERT INTO boxoffice(movie_id, rating, sales_in_millions)
+VALUES (1, 9.9, 283742034 / 1000000);
+
+UPDATE mytable
+SET column = value_or_expr, 
+    other_column = another_value_or_expr, 
+    …
+WHERE condition;
+
+DELETE FROM mytable
+WHERE condition;
+
+CREATE TABLE IF NOT EXISTS mytable (
+    column DataType TableConstraint DEFAULT default_value,
+    another_column DataType TableConstraint DEFAULT default_value,
+    …
+);
+
+/** ADD INDEX */
+CREATE INDEX your_index_name ON your_table_name(your_column_name) USING HASH;
+or
+CREATE INDEX your_index_name ON your_table_name(your_column_name) USING BTREE;
+
+/** COPY A TABLE */
+CREATE TABLE table_name SELECT field1, field2, ... FROM table_to_copy;
+or
+CREATE TABLE table_name AS SELECT field1, field2, ... FROM table_to_copy;
+
+/** CLONE A TABLE */
+SHOW CREATE TABLE table_name;
+CREATE TABLE table_name2 [copy-paste];
+
+/** INSERT RECORDS FROM ANOTHER TABLE */
+INSERT INTO this_table SELECT * FROM other_table WHERE [condition];
+
+ALTER TABLE table_name
+	ADD column DataType OptionalTableConstraint DEFAULT default_value;
+	CHANGE old_column_name new_column_name VARCHAR(10);
+	DROP column_to_be_deleted;
+	RENAME TO new_table_name;
+	MODIFY id INT NOT NULL;
+	DROP CONSTRAINT someConstraint;
+	AUTO_INCREMENT = 1000; //auto_increment starts with 1000 not from 0;
+	ADD FULLTEXT index_name (column_list) − This creates a special FULLTEXT index that is used for text-searching purposes.
+
+/** UNIQUE */
+ALTER TABLE table_name ADD UNIQUE(field);
+OR
+ALTER TABLE table_name ADD CONSTRAINT constraint_name UNIQUE(field);
+ALTER TABLE table_name DROP INDEX constraint_name;
+OR
+ALTER TABLE table_name DROP KEY constraint_name;
+
+/** PRIMARY KEY */
+ALTER TABLE table_name ADD PRIMARY KEY(id);
+OR
+ALTER TABLE table_name ADD CONSTRAINT pk PRIMARY KEY(id);
+ALTER TABLE table_name DROP PRIMARY KEY;
+
+/** FOREIGN KEY */
+ALTER TABLE table_name ADD FOREIGN KEY (user_id) REFERENCES other_table_name(id)
+	  ON UPDATE RESTRICT
+	  ON DELETE RESTRICT;
+ALTER TABLE table_name ADD CONSTRAINT fk_name FOREIGN KEY (name_of_the_columns, name_of_the_columns2) REFERENCES other_table(id1, id2);
+ALTER TABLE table_name DROP INDEX fk_name;
+OR
+ALTER TABLE table_name DROP KEY fk_name;
+
+CONSTRAINT some_name FOREIGN KEY (name_of_the_columns, name_of_the_columns2) REFERENCES other_table(id1, id2)
+CONSTRAINT some_name PRIMARY KEY (c1, c2, c3)
+CONSTRAINT some_name UNIQUE (c1, c2, c3)
+
+==============================================================================================================================
+PROCEDURES AND FUNCTIONS
+
+DELIMITER //
+CREATE PROCEDURE procedure_name (OUT param INT)
+	BEGIN
+		SELECT COUNT(*) INTO param FROM table_name;
+	END//	
+	
+DELIMITER ;
+
+CALL procedure_name(@param_name);
+SELECT @param_Name;
+
+---------------------------------------------------
+CREATE FUNCTION f(p CHAR(20))
+RETURNS CHAR(50) DETERMINISTIC
+RETURN CONCAT('Hello, ', p, '!');
+
+SELECT f('world');
+
+-----------------------------------------------------
+DELIMITER //
+CREATE FUNCTION f(p VARCHAR(10)) RETURNS VARCHAR(10) DETERMINISTIC
+BEGIN
+	DECLARE v VARCHAR(10);
+	SET v = CONCAT('some res', p);
+	RETURN (v);
+END//
+DELIMITER ;
+
+SELECT f('abcde');
+
+-----------------------------------------------------
+DELIMITER //
+CREATE PROCEDURE p(OUT p_out VARCHAR(20), IN p_in VARCHAR(20))
+BEGIN
+	DECLARE res VARCHAR(20);
+	SET res = CONCAT(p_in, ' is result');
+	SELECT res INTO p_out;
+END//
+DELIMITER ;
+
+CALL p(@result, 'something');
+SELECT @result;
+
+-----------------------------------------------------
+1 - Функции потока управления программой: ifnull, if
+2 - Строковые функции: concat, lenght
+3 - Математические функции: sqrt
+4 - Функции даты и времени: now
+5 - Функции приведения типов: cast
+6 - Агрегатные функции - это функции возвращающие одно значение от набора значений столбца (sum, max, min, count) GROUP BY
+7 - Битовые функции: bit_count
+8 - : PASSWORD(str), ENCODE(str,pass_str) + DECODE(crypt_str,pass_str), GET_LOCK(str,timeout) + RELEASE_LOCK(str), FOUND_ROWS()
+
+
+CREATE FUNCTION func() RETURNS INTEGER
+BEGIN
+	DECLARE val INTEGER;
+	SELECT id INTO val FROM table;
+	RETURN IFNULL(val, 0);
+END $$
+
+----------------------------------------------------
+CYCLES AND CONDITIONS
+
+IF param1 = 0 THEN 
+        SELECT 'Parameter value = 0'; 
+ELSE 
+        SELECT 'Parameter value <> 0'; 
+END IF;
+- - - - - - - - - -
+CASE variable1 
+WHEN 0 THEN 
+        INSERT INTO table1 VALUES (param1); 
+
+WHEN 1 THEN 
+        INSERT INTO table1 VALUES (variable1); 
+ELSE 
+        INSERT INTO table1 VALUES (99); 
+END CASE; 
+- - - - - - - - - -
+WHILE variable1 < param1 DO 
+	INSERT INTO table1 VALUES (param1); 
+        SELECT COUNT(*) INTO variable2 FROM table1; 
+        SET variable1 = variable1 + 1; 
+END WHILE;
+
+----------------------------------------------------------------------
+КУРСОРЫ - это объект бд который позволяет организовать сложную обработку данных на стороне сервера строка за строкой. 
+
+1. Курсоры объявляются в начале хранимой процедуры до выполнения каких либо операций.
+//пара переменных для последующей выборки данных курсора
+DECLARE a, b INT;
+//объявляем курсор, выбирающий пары значений из некой тестовой таблицы
+DECLARE cur1 CURSOR FOR 
+SELECT value_a, value_b FROM test.t1;
+
+2. Перед выборкой строк из курсора его нужно инициализировать (выполняется запрос)
+OPEN cur1;
+
+3. Далее вы можете выбирать данные из курсора, строка за строкой.
+//помещаем следующую пару значений в переменные a и b
+FETCH cur1 INTO a, b;
+//выполняем какие то манипуляции с данными
+IF a < b THEN
+   ...
+ELSE
+   ...
+END IF;
+
+4. Завершение работы с курсором
+CLOSE cur1;
+
+5. Нам нужен сигнал об окончании данных в курсоре. В MySQL для этого используют обработку исключительных ситуаций — конструкцию
+DECLARE .. HANDLER FOR ... { }
+
++++ Пример +++
+// объявим дополнительно переменную-флажок
+// этот флаг будет хранить сигнал об окончании данных в курсоре
+DECLARE done INT DEFAULT FALSE;
+DECLARE a, b INT;
+DECLARE cur1 CURSOR FOR SELECT id,data FROM test.t1;
+//описываем как действовать во время исключения
+DECLARE CONTINUE HANDLER FOR NOT FOUND 
+//а именно : установим флаг
+SET done = TRUE;
+//если нужно выполнить несколько команд - используйте операторные скобки
+//BEGIN ... END;
+//инициализация
+OPEN cur1;
+//цикл чтения курсора
+read_loop: LOOP
+    FETCH cur1 INTO a, b;
+    //проверка флага
+    IF done THEN
+        LEAVE read_loop;
+    END IF;
+    //обработка данных
+    ...
+END LOOP;
+//завершаем работу с курсором
+CLOSE cur1;
+
+----------------------------------------------------------------------
+TRIGGERS
+
+DELIMITER //
+CREATE TRIGGER mytrigger AFTER INSERT ON table_name
+FOR EACH ROW
+BEGIN
+	UPDATE table_name2 SET field = 'value' WHERE id = 1;
+END//
+DELIMITER ;
+
+DROP TRIGGER mytrigger;
+
+==============================================================================================================================
+WITH EXPRESSIONS
+
+WITH
+  cte1 AS (SELECT a, b FROM table1),
+  cte2 AS (SELECT c, d FROM table2)
+SELECT b, d FROM cte1 JOIN cte2
+WHERE cte1.a = cte2.c;
+
+WITH RECURSIVE Fibonacci AS (
+	SELECT 1 AS ord,
+	1 AS value,
+	1 AS next_value
+
+	UNION ALL
+
+	SELECT ord + 1 AS value,
+	next_value,
+	value + next_value
+	FROM Fibonacci
+	WHERE ord < 10
+)
+SELECT * FROM Fibonacci;
+
+==============================================================================================================================
+JDBC:
+	Class.forName(DRIVER);
+	try (Connection con = DriverManager.getConnection(...);
+	Statement st = con.statement();
+	ResultSet rs = st.executeQuery(SQL))
+		id i = st.executeUpdate(SQL);
+		while (rs.next)
+			rs.getString(1); //or rs.getString(name);
+	PreparedStatement, CallableStatement;

@@ -1,0 +1,61 @@
+Thread states:
+New
+Runnable
+Blocked
+Waiting
+Timed Waiting
+Terminated
+
+Thread.State newState = Thread.State.NEW;
+Thread.State runnableState = Thread.State.RUNNABLE;
+Thread.State terminatedState = Thread.State.TERMINATED;
+Thread.State blockedState = Thread.State.BLOCKED; //waiting for a monitor, lock.lock(), semaphore.acquire().
+Thread.State waitingState = Thread.State.WAITING; //Object.wait with no timeout, Thread.join with no timeout, LockSupport.park, wait(), join(), condition.awaits()
+Thread.State timedWaitingState = Thread.State.TIMED_WAITING; //Thread.sleep, Object.wait with timeout, Thread.join with timeout
+                                                                     //LockSupport.parkNanos, LockSupport.parkUntil, wait(), join(), condition.awaits()
+							
+
+
+
+Multithreading problems:
+Deadlock - Occurs when two competing processes are waiting for each other to finish, allowing neither to finish.
+	Дедлоки происходят в race conditions.
+Starvation – Occurs when a process never gains accesses to resources, never allowing the program to finish.
+	Starvation describes a situation where a greedy thread holds a resource for a long time so other threads are blocked forever. The blocked threads are waiting to acquire the resource but they never get a chance. Thus they starve to death.
+	Starvation can occur due to the following reasons:
+		- Threads are blocked infinitely because a thread takes long time to execute some synchronized code (e.g. heavy I/O operations or infinite loop).
+		- A thread doesn’t get CPU’s time for execution because it has low priority as compared to other threads which have higher priority.
+		- Threads are waiting on a resource forever but they remain waiting forever because other threads are constantly notified instead of the hungry ones.
+	When a starvation situation occurs, the program is still running but doesn’t run to completion because some threads are not executed.
+Race Conditions – Occurs when processes that must occur in a particular order occur out of order due to multiple threading. 
+	More specifically, this is discussing a data race.
+	Когда в критическую секцию открыт проход и при двух потоках могут i может принять различные варианты значений в зависимости 
+	от того, какой поток раньше успел подойти к той или иной строчке кода (A: i = 3; i++; B: i = 10; i ++).
+	Или при Deadlock, может быть так, что оба потока займут сразу два монитора и возникнет дедлок, а может быть так, 
+	что один поток успеет занять оба монитора, раньше другого. Тогда дедлока не случится.
+	Например i++.
+Livelock – Occurs when two threads are dependent on each other signals and are both threads respond to each others signals. 
+If this is the case, the threads can cause a loop similar to something between a deadlock and starvation.
+
+Conclusion:
+- Deadlock:  All threads are blocked, the program hangs forever.
+- Livelock: No threads blocked but they run into infinite loops. The program is still running but unable to make further progress.
+- Starvation: Only one thread is running, and other threads are waiting forever.
+
+
+
+
+
+Process - исполнение программы.
+Thread (нить) - единица исполнения кода. В одном процессе может быть несколько потоков.
+
+
+
+
+i Executor => i ExecutorService => a AbstractExecutorService => ThreadPoolExecutor or Executors.newFixedThreadPool or Executors.newCachedThreadPool
+i Executor => i ExecutorService => i ScheduledExecutorService + ThreadPoolExecutor => ScheduledThreadPoolExecutor or Executors.newScheduledThreadPool
+i Executor => i ExecutorService => a AbstractExecutorService => ForkJoinPool or Executors.newWorkStealingPool
+
+i Runnable + i Future => i RunnableFuture => FutureTask
+i Future + i CompletionStage => CompletableFuture
+i CompletionService => ExecutorCompletionService

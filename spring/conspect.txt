@@ -1,0 +1,358 @@
+Spring создан для упрощения разработки в общем.
+Ключевые стратегии:
+1) легковесность и ненасильственность благодаря применению простых Java-объектов (POJO);
+2) слабое связывание посредством внедрения зависимостей и ориентированности на интерфейсы;
+3) декларативное программирование через аспекты и общепринятые соглашения;
+4) уменьшение объема типового кода через аспекты и шаблоны.
+
+ссылки на объекты внутри класса - зависимости (dependency)
+
+Связанность кода - это когда классы имеют ссылки внутри себя на другие классы, то есть между разными классами есть связь, а не все они несвязанные, сами по себе.
+
+Внедрение через конструктор - это когда, объект создаётся не самим классом, имеющим ссылку на этот объект, а передаётся ему извне через конструктор.
+
+DI = ссылка на интерфейс внутри класса, и объекты под эту интерфейсную ссылку передаются извне (через конструктор или сеттер). = Слабая связанность.
+
+Для тестирования удобно, когда можно передавать свои объекты в класс (мокнутые, например), чтобы, например, проверить, был ли вызван метод только 1 раз.
+
+Связывание (wiring) - процесс создания связей между компонентами.
+Связывание - это например:
+<bean id="knight" class="com.springinaction.knights.BraveKnight">
+	<constructor-arg ref="quest" /> <!-- Внедрение компонента quest -->
+</bean>
+<!-- Создание SlayDragonQuest -->
+<bean id="quest"
+	class="com.springinaction.knights.SlayDragonQuest" />
+	
+APPLICACTION CONTEXTS:
+	ClassPathXmlApplicationContext
+
+----------------------------------------------------------------------
+AOP
+
+System services such as logging, transaction management, and security are commonly referred to as cross-cutting (сквозные) concerns because they tend to cut (сквозят) across multiple components in a system.
+
+With such services:
+	The code that implements the systemwide concerns is duplicated across multiple components.
+	Your components are littered (замусоренные) with code that isn’t aligned with their core functionality.
+	
+In short, aspects ensure that POJOs remain plain
+
+<beans>
+	<bean id="knight" class="com.springinaction.knights.BraveKnight">
+		<constructor-arg ref="quest" />
+	</bean>
+	<bean id="quest"
+		class="com.springinaction.knights.SlayDragonQuest" />
+	<bean id="minstrel"
+		class="com.springinaction.knights.Minstrel" />
+	<aop:config>
+		<aop:aspect ref="minstrel">
+			<aop:pointcut id="embark"
+				expression="execution(* *.embarkOnQuest(..))" />	/** pointcut and expression (with an AspectJ's pointcut expr lang)*/
+			<aop:before pointcut-ref="embark"
+				method="singBeforeQuest"/>							/** advice before */
+			<aop:after pointcut-ref="embark"
+				method="singAfterQuest"/>							/** advice after */		
+		</aop:aspect>
+	</aop:config>
+</beans>
+
+<bean id="theStage"
+	class="com.springinaction.springidol.Stage" 					/** get an object from a static method, for example in Singleton */
+factory-method="getInstance" /
+
+<context:annotation-config>											/** ищет аннотации, чтобы связывать бины */
+<context:component-scan>									   		/** сканирует аннотации в package и subpackages, чтобы находить бины и связывать их */
+
+----------------------------------------------------------------------
+XML:
+	init-method
+	destroy-method
+Java:
+	InitializingBean or @PostConstruct
+	DisposableBean or @PreDestroy
+--------------------
+4 KINDS OF AUTOWIRING:
+ byName—Attempts to match all properties of the autowired bean with beans
+	that have the same name (or ID) as the properties. Properties for which there’s
+	no matching bean will remain unwired.
+	Если совпадают имя бина и имя класса.
+ byType—Attempts to match all properties of the autowired bean with beans
+	whose types are assignable to the properties. Properties for which there’s no
+	matching bean will remain unwired.
+ constructor—Tries to match up a constructor of the autowired bean with
+	bean	s whose types are assignable to the constructor arguments.
+ autodetect—Attempts to apply constructor autowiring first. If that fails,
+	byType will be tried.
+	
+Сначала @Autowiring идёт по имени. Например, 
+@Autowiring
+A a;
+Будет искать Component("a");
+
+Если не найдёт, то будет искать бины, которые принадлежат классу A.
+Если найдёт несколько, то нужны @Qualifier.
+@Autowiring
+@Qualifier("somename")
+A a;
+
+И @Qualifier("somename") на @Component класса A.
+
+Autowire a primitive value with the @Value("some value") annotation.
+
+---------------------------------------------------------------------
+private Set<Knife> knives;
+@Inject
+public KnifeJuggler(Provider<Knife> knifeProvider) {
+	knives = new HashSet<Knife>();
+	for (int i = 0; i < 5; i++) {
+		knives.add(knifeProvider.get());
+	}
+}
+Instead of receiving a Knife instance at construction, KnifeJuggler will receive a
+Provider<Knife>. At this point, only the provider is injected. No actual Knife object
+will be injected until the get() method is called on the provider. In this case, the
+get() method is called five times. And since the Knife bean is a prototype, we know
+that the Set of knives will be given five distinct Knife objects to work it
+
+----------------------------------------------------------------------
+TEMPLATES
+
+JDBC Template
+public Employee getEmployeeById(long id) {
+	return jdbcTemplate.queryForObject(
+		"select id, firstname, lastname, salary " +
+		"from employee where id=?",
+		new RowMapper<Employee>() {
+		public Employee mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Employee employee = new Employee();
+			employee.setId(rs.getLong("id"));
+			employee.setFirstName(rs.getString("firstname"));
+			employee.setLastName(rs.getString("lastname"));
+			employee.setSalary(rs.getBigDecimal("salary"));
+			return employee;
+		}
+	},
+	id);
+}
+
+---------------------------------------------------------------------------------
+CONTAINING
+
+In a Spring-based application, your application objects will live within the Spring container. As illustrated in figure 1.4, the container will create the objects, wire them
+together, configure them, and manage their complete lifecycle from cradle to grave
+(or new to finalize(), as the case may be).
+
+The container is at the core of the Spring Framework. Spring’s container uses
+dependency injection (DI) to manage the components that make up an application.
+This includes creating associations between collaborating components. As such, these
+objects are cleaner and easier to understand, support reuse, and are easy to unit test
+
+In a Spring application, objects are created, wired together, and live within the Spring container.
+
+There’s no single Spring container. Spring comes with several container implementations that can be categorized into two distinct types. Bean factories (defined by the
+org.springframework.beans.factory.BeanFactory interface) are the simplest of
+containers, providing basic support for DI. Application contexts (defined by the
+org.springframework.context.ApplicationContext interface) build on the notion
+of a bean factory by providing application framework services, such as the ability to
+resolve textual messages from a properties file and the ability to publish application
+events to interested event listeners.
+
+Spring cointainers:
+1) Bean factories;
+2) Application contexts;
+
+Application contexts:
+1) ClassPathXmlApplicationContext;
+2) FileSystemXmlApplicationContext;
+3) XmlWebApplicationContext.
+
+LIFECYCLE
+1 Spring instantiates the bean.
+2 Spring injects values and bean references into the bean’s properties.
+3 If the bean implements BeanNameAware, Spring passes the bean’s ID to the setBeanName() method.
+4 If the bean implements BeanFactoryAware, Spring calls the setBeanFactory()
+method, passing in the bean factory itself
+5 If the bean implements ApplicationContextAware, Spring will call the setApplicationContext() method, passing in a reference to the enclosing application context.
+6 If any of the beans implement the BeanPostProcessor interface, Spring calls
+their postProcessBeforeInitialization() method.
+7 If any beans implement the InitializingBean interface, Spring calls their
+afterPropertiesSet() method. Similarly, if the bean was declared with an
+init-method, then the specified initialization method will be called.
+8 If there are any beans that implement BeanPostProcessor, Spring will call their
+postProcessAfterInitialization() method.
+9 At this point, the bean is ready to be used by the application and will remain in
+the application context until the application context is destroyed.
+10 If any beans implement the DisposableBean interface, then Spring will call
+their destroy() methods. Likewise, if any bean was declared with a destroymethod, then the specified method will be called.
+
+---------------------------------------------------------------------------------
+10 namespaces of xml_configuration: aop, beans, context, jee, jms, lang, mvc, oxm, tx, util
+
+---------------------------------------------------------------------------------
+SCOPES
+singleton
+prototype
+request
+session
+global-session (only works with a portlet context)
+application (servletContext)
+websocket
+thread (Every request for a bean will return the same instance within the same thread)
+
+---------------------------------------------------------------------------------
+BeanDefinitionReader считывает информацию о бинах со всеми их настройками из xml и переносит всё это в map<id, nastroiki>,
+который называется BeanDefinition
+
+Далее ClassPathBeanDefinitionScanner(ResourceLoaderAware) ищет аннотированные бины и добавляет их в эту map (BD) тоже.
+
+----------------------------------------------------------------------------------
+When BeanPostProcessor Methods are Called Typically spring’s DI container does following things to create a bean, you request for:
+
+Create the bean instance either by a constructor or by a factory method
+Set the values and bean references to the bean properties
+Call the setter methods defined in the all the aware interfaces
+Pass the bean instance to the postProcessBeforeInitialization() method of each bean post processor
+Call the initialization callback methods
+Pass the bean instance to the postProcessAfterInitialization() method of each bean post processor
+The bean is ready to be used
+When the container is shut down, call the destruction callback methods
+
+=======================================================================================
+FEATURES
+
+Через ХМЛ можно наследовать бины от родителя класс которого может даже не существовать. Таким оразом
+	все потомки наследует одинаковую логику из родителя.
+	
+Через ХМЛ можно инжектить целые методы
+
+<bean id="magicBox"
+class="com.springinaction.springidol.MagicBoxImpl">
+	<replaced-method
+	name="getContents"
+	replacer="tigerReplacer" />
+</bean>
+	<bean id="tigerReplacer"
+class="com.springinaction.springidol.TigerReplacer" />
+
+
+
+
+<bean id="stevie"
+	class="com.springinaction.springidol.Instrumentalist">
+	<lookup-method name="getInstrument" bean="guitar" />
+	<property name="song" value="Greensleeves" />
+</bean>
+
+
+
+
+
+Как и в элементе <replaced-method>, атрибут name элемента <lookupmethod> определяет замещаемый метод. Здесь замещается метод
+getInstrument(). Атрибут bean определяет компонент, возвращаемый
+методом getInstrument(). В нашем случае это компонент с идентификатором guitar. В результате метод getInstrument() фактически будет
+замещен следующей реализацией:
+
+public Instrument getInstrument() {
+	plicationContext ctx = ...;
+	return (Instrument) ctx.getBean("guitar");
+}
+
+=======================================================================================
+MVC
+				d i s p a t c h e r    s e r v l e t
+handler mapping		controller		view resolver		view
+
+После получения HTTP-запроса DispatcherServlet обращается к интерфейсу HandlerMapping, который определяет, какой Контроллер должен быть вызван, после чего, отправляет запрос в нужный Контроллер.
+Контроллер принимает запрос и вызывает соответствующий служебный метод, основанный на GET или POST. Вызванный метод определяет данные Модели, основанные на определённой бизнес-логике и возвращает в DispatcherServlet имя Вида (View).
+При помощи интерфейса ViewResolver DispatcherServlet определяет, какой Вид нужно использовать на основании полученного имени.
+После того, как Вид (View) создан, DispatcherServlet отправляет данные Модели в виде атрибутов в Вид, который в конечном итоге отображается в браузере.
+
+Все вышеупомянутые компоненты, а именно, HandlerMapping, Controller и ViewResolver, являются частями интерфейса WebApplicationContext extends ApplicationContext, с некоторыми дополнительными особенностями, необходимыми для создания web-приложений.
+
+=======================================================================================
+ВИДЕО
+
+XmlBeanDefinitionReader сканирует xml и переводить то, что там написано, в bean definiitons(объекты, которые хранят в себе информацию про бины)
+
+BeanFactory отвечает за создание и хранение всех объектов
+
+После того, как поднимает ApplicationContext, приходит XmlBeanDefinitionReader, считывает и xml все декларации бинов
+и кладёт их в BeanDefinition, который является Map (bean Id, декларация бина(из какого класса его создавать, есть ли у него или нет метод, и как он называется, 
+какие у него проперти и прочее))
+
+BeanDefinition это описание настроек бина, определение бина.
+<bean id = "..." class = "...">
+</bean>
+
+После того как bean definitions созданы, BeanFactory начинает работать с ними, создаёт из классов объекты 
+и все бины складывает в IoC Container.
+Как только поднялся ApplicationContext все singleton сразу же создаются и складываются в контейнер, 
+а prototypes создаются только тогда, когда они нужны, то есть создаёт, настраивает, отдаёт и забывает. 
+Destroy метод не работает для prototype, потому что spring не хранит их, а вот для singleton работает при 
+закрытии контекста.
+
+BeanPostProcessor - находится между BeanFactory и IoC Container. Все бины проходят через него. Chain of responsibility. Настройка бинов. Обрабатывает аннотации, в т.ч. кастумные.
+postProcessBeforeInitialization(...)
+init()
+postProcessAfterInitialization(...)
+
+Фабрика создаёт объект из бин дефинишн далее его перехватывает бинпостпроцессор, потом поля инициализируются, 
+	потом второй бинпроцессор, потом он идёт в контейнер??
+
+Есть много бинпостпроцессоров, каждый из них читает свои аннотации. Для того, чтобы не прописывать все эти бины-постпроцессоры в хмл была
+придумана строчка в хмл <annotation config> or <component-scan> (annotation-config + scan annonated classes), которая на самом деле прописывает все эти бины-постпроцессоры.
+
+фабрика создала объект - бпп перехватил сделал что надо - фабрика проинициализровала поля - потсконстракт - бпп перехватил сделал что надо
+
+фабрика вытаскивает мапу бин дефенишн откладывает в стороны бины которые не относятся к бпп. Работает пока только с бпп а позже с их помощью
+	будет настраивать другие бины 
+
+фабрика создаёт и инициалирует бины бпп, потом создаёт другие бины, отдаёт их бпп, потом инициализирует их, потом вызывает инит, потом отдаёт бпп.
+	Получаем готовый бин в иок контейнере.
+	
+сжлиб наследует классы для добавление новых функций
+динамик прокси имплементирует тот же самый интерфейс для того же самого
+
+Спринг смотрит, есть ли у объекта интерфейсы. Если да, то прокси, иначе сжлиб.
+
+Добавление новой логики кем(бпп) происходит на этапе bpp after init.
+
+Proxy.newProxyInstance(ClassLoader, interfaces, InvocationHandler) генерит класс, создаёт объект этого класса.
+ClassLoader which will load the classes into heap (from java 8).
+Interfaces which are going to be implemented by this class.
+InvocationHandler is an object which incapsulates logic which are going to be realized in each method in the the generated class.
+
+3 phased constructor
+Constructor java
+@PostConstruct BPP
+ApplicationListener ContextListener Из любого ивента может вытащить контекст.
+	ContextStartedEvent
+	ContextStoppedEvent
+	ContextRefreshedEvent +
+	ContextClosedEvent
+	
+BeanFactoryPostProcessor (BFPP) позволяет настраивать бин дефинишены до того как создаются бины.
+	Может повлиять на Factory и на BeanDefinitions, из которых фабрика будет создавать бины.
+
+BeanDefinitionReader читает xml, достаёт оттуда информацию и кладёт её в BeanDefinition(map)
+BFPP переделывает BeanDefinitions как захочет
+BeanFactory создаёт объекты из BeanDefinition и отдаёт их BeanPostProcessor before.
+BPP before что-то делает с ними и отдаёт BF.
+BeanFactory вызывает настраивает бины из BD, вызывает @PostConstruct, отдаёт BPP after.
+BPP after выполняет дополнительную логику в объектах при помощи прокси и возвращает его BF.
+BF отдаёт новосозданный объект IoC containerУ (hashMap). Beanы готовы.
+
+ClassPathBeanDefinitionScanner (ResourceLoaderEvent) ищет классы с аннотацией @Component и создаёт дополнительные BeanDefinitions из них
+
+AnnotatedBeanDefinitionReader внутри AnnotationConfigApplicationContext, регистрирует все java конфиги, парсит java-based конфиги.
+ConfigurationClassPostProcessor (особый BeanFactoryPostProcessor, который не изменяет а добавляет BeanDefinitions из java конфигов) 
+	обрабатывает java configs. Его регистрирует AnnotationConfigApplicationContext.
+	Он создаёт BeanDefinitions по @Bean
+	Он также относится к
+		@Import можно импортировать другую java конфигурацию
+		@ImportResource можно импортировать xml конфигурацию
+		@ComponentScan
+		
+Groovy Config. new GenericGroovyApplicationContext("");

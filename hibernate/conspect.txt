@@ -1,0 +1,149 @@
+Settings:
+hibernate.properties and hibernate.cfg.xml
+-> SessionFactory (ThreadSafe). 1 SessionFactory  = 1 DataBase
+-> Session (Not threadSafe)
+-> Transaction
+	Transactions in Hibernate are handled by an underlying transaction manager and transaction (from JDBC or JTA).
+	This is an optional object and Hibernate applications may choose not to use this interface, instead managing transactions in their own application code.
+Query. use SQL or HQL string to retrieve data from the database and create objects.
+Criteria.
+
+---------------------------
+SESSIONS
+
+Instances may exist in one of the following three states at a given point in time:
+	transient − A new instance of a persistent class, which is not associated with a Session and has no representation in the database and no identifier value is considered transient by Hibernate.
+	persistent − You can make a transient instance persistent by associating it with a Session. A persistent instance has a representation in the database, an identifier value and is associated with a Session.
+	detached − Once we close the Hibernate Session, the persistent instance will become a detached instance.
+	
+----------------------------
+session.load() will always return a “proxy” object without hitting the database. Proxy is nothing but a fake object created by hibernate with the given identifier value and the remaining values will not be even initialized. If no row is found then this method will throw “ObjectNotFoundException”
+	It will hit the database only when it tries to retrieve other properties of Employee object (ie) employee.getName() or employee.getAge() or employee.getDept().
+	
+session.get() will always hits the database immediately and returns the original object. If no row is found then this method will return “null”.
+
+SESSION.GET()																			SESSION.LOAD()
+Never returns a proxy object														|||||Always returns the proxy object
+Returns null when the corresponding record is not found but the execution continues	||||| Throws ObjectNotFoundException when the corresponding record is not found and executions terminates
+Eager Loading, as it hits the database immediately and returns the original object||||| Lazy Loading, as it hits the database only when it tries to retrieve other properties of the object
+Commonly used for retrieving (select) the data										|||||Commonly used for delete, update operations
+
+----------------------------
+Types of Inheritance in Hibernate
+Hibernate offers 3 different approaches for mapping this kind of hierarchical classes.
+
+Table per Class hierarchy
+Table per Sub-Class hierarchy
+Table per Concrete Class hierarchy
+Table per Class hierarchy
+	CREATE TABLE "VEHICLE" 
+	 ( "VEHICLE_ID" NUMBER(10,0) NOT NULL , 
+	 "ENGINE" VARCHAR2(20 BYTE) NULL , 
+	 "WHEELS" VARCHAR2(10 BYTE) NULL , 
+	 "BUS_TYPE" VARCHAR2(40 BYTE) NULL , 
+	 "DISCRIMINATOR" VARCHAR2(40 BYTE) NOT NULL, 
+	 );
+	Vehicle.java
+		@Entity
+		@Table(name = "VEHICLE")
+		@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+		@DiscriminatorColumn(name="DISCRIMINATOR",discriminatorType=DiscriminatorType.STRING)
+		@DiscriminatorValue(value="Vehicle")
+	Bus.java
+		@Entity
+		@Table(name = "VEHICLE")
+		@DiscriminatorValue(value="Bus")
+	
+	@Inheritance – This annotation defines the inheritance strategy which will be used and it should be defined in the root entity class (Vehicle). Here we have used SINGLE_TABLE Strategy.
+	@DiscriminatorColumn – @DiscriminatorColumn annotation defines the discriminator column for the SINGLE_TABLE and JOINED strategies. This annotation also should be used in the root entity class.
+	@DiscriminatorValue – This annotation specifies the value for the discriminator column, this annotation has to be used on the concrete entity classes (Vehicle and Bus).
+	
+Table Per Subclass Hierarchy
+	CREATE TABLE "VEHICLE" 
+	 ( "VEHICLE_ID" NUMBER(10,0) NOT NULL , 
+	   "ENGINE" VARCHAR2(20 BYTE) NULL , 
+	   "WHEELS" VARCHAR2(10 BYTE) NULL,
+	   PRIMARY KEY (VEHICLE_ID)
+	 );
+	 CREATE TABLE "BUS" 
+	 ( "VEHICLE_ID" NUMBER(10,0) NOT NULL ENABLE, 
+	   "BUS_TYPE" VARCHAR2(255 CHAR), 
+	   PRIMARY KEY (VEHICLE_ID),
+	   CONSTRAINT FK_BUS FOREIGN KEY (VEHICLE_ID) REFERENCES VEHICLE (VEHICLE_ID)
+	 );
+	@Entity
+	@Table(name = "VEHICLE")
+	@Inheritance(strategy=InheritanceType.JOINED)
+	public class Vehicle
+	
+	@Entity
+	@Table(name = "VEHICLE")
+	@PrimaryKeyJoinColumn(name="VEHICLE_ID")
+	public class Bus extends Vehicle
+	
+	@Inheritance – This annotation defines the inheritance strategy which will be used and it should be defined in the root entity class (Vehicle). Here we have used JOINED Strategy.
+	@PrimaryKeyJoinColumn annotation defines the primary key of the parent class, here VEHICLE_ID is the primary key.
+	
+Hibernate Inheritance – Table Per Concrete Class Hierarchy
+	CREATE TABLE "VEHICLE" 
+	 ( "VEHICLE_ID" NUMBER(10,0) NOT NULL , 
+	 "ENGINE" VARCHAR2(20 BYTE) NULL , 
+	 "WHEELS" VARCHAR2(10 BYTE) NULL,
+	 PRIMARY KEY (VEHICLE_ID)
+	 );
+	 
+	 CREATE TABLE "BUS" 
+	 ( "VEHICLE_ID" NUMBER(10,0) NOT NULL, 
+	 "ENGINE" VARCHAR2(20 BYTE) NULL , 
+	 "WHEELS" VARCHAR2(10 BYTE) NULL,
+	 "BUS_TYPE" VARCHAR2(255 CHAR), 
+	 PRIMARY KEY (VEHICLE_ID)
+	 );
+	 
+	@Entity
+	@Table(name="VEHICLE")
+	@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+	public class Vehicle
+	
+	@Entity
+	@Table(name = "BUS")
+	@AttributeOverrides({
+		@AttributeOverride(name="engine", column=@Column(name="ENGINE")),
+		@AttributeOverride(name="wheels", column=@Column(name="WHEELS"))
+	})
+	public class Bus extends Vehicle
+	
+	@AttributeOverrides – This annotation overrides the multiple properties of the parent class
+	@AttributeOverride – This annotation overrides the individual property of the parent class. We have VehicleId, engine, wheel property in the parent class (Vehicle), in order to override it in the subclass we will be using this annotation.
+	
+------------------------------------------------------------------------------
+Hibernate:
+transient(new) - the object is new and it's nowhere.
+persistent - the object is linked with persistent context and database.
+detached - the object is detached from persisten and database.
+
+JPA EntityManager:
+new
+persist() -> managed. refresh() перечитывает данные из бд в объект.
+remove() -> deleted
+detached
+	Происходит в таких ситуациях:
+	Сериализации/десериализации сущности, передаче из jvm в jvm и т.д.
+	Окончании транзакции
+	Закрытии EntityManager методом close() или просто сборщиком мусора.
+	Сброса persistence context EntityManager  методом clear().
+merge()
+	применённый на отсоединённой сущности, либо копирует значение переданной сущности в уже существующую сущность с тем же значением поля @id, 
+	либо создаёт новую сущность этого типа и копирует данные в неё. В обоих случаях результат сохраняется в базу и из метода возвращается новая управляемая сущность. 
+	Старая при этом остаётся отсоединённой.
+	merge() можно использовать и с новыми сущностями. В отличие от persist() он создаст ещё одну сущность того же типа, скопирует все данные в неё и сделает её управляемой. persist() же, как написано выше, копий не делает и переводит в управляемые то, что ему передали.
+Persisted
+	В этом состоянии сущность существует только в базе данных, а в программе её нет. Перевести сущность в состояние управляемой, то есть попросту загрузить её из базы данных, 
+	можно методами EntityManager  find()  или семейством методов  createQuery()
+	
+---------------------------------------------------------------------------
+CRITERIA
+
+Restrictions. eq; lt; le; gt; ge
+Criteria criteria = session.createCriteria(someClass.class)
+                     .add(Restrictions.eq("value", 400);
